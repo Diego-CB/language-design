@@ -10,7 +10,7 @@
   - [x] Conversión de de infix a postfix para producción de 𝑟' en postfix
   - [ ] Implementación del algoritmo de Construcción de Thompson con base en 𝑟'    
   - [ ] Mostrar en pantalla el listado solicitado de descripciones sobre los AFN generados
-  - [ ] Ejercicios Pre-Laboratorio
+  - [x] Ejercicios Pre-Laboratorio
 
 ## 🗃️ Estructura de Archivos
 
