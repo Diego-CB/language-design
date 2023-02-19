@@ -24,6 +24,7 @@ def _shunting(regex:str) -> list:
   '''
   Implementacion del algoritmo Shunting Yard adaptado a regex
   Ademas, agrega operador . al postfix final
+  Referencia: https://www.cs.buap.mx/~andrex/estructuras/AlgoritmoPolacasPosfijo.pdf
   '''
   regex = regex.replace(' ', '')
   regex = list(regex)
