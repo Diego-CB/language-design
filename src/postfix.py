@@ -29,7 +29,7 @@ def _shunting(regex:str) -> list:
   regex = regex.replace(' ', '')
   regex = list(regex)
   out:list = [] # Stack de salida
-  stack:list = [] # Stack de stackeradores
+  stack:list = [] # Stack de stack de operadores
 
   while len(regex) > 0:
     char = regex.pop(0)
@@ -55,7 +55,8 @@ def _shunting(regex:str) -> list:
         out.append(next_char)
         next_char = stack.pop()
         
-        if next_char != '(' and len(stack) == 0: raise Exception('Error: regex not valid.\n"(" missing')
+        if next_char != '(' and len(stack) == 0:
+          raise Exception('Error: regex not valid.\n"(" missing')
       
       if len(regex) > 0:
         next_char = regex[0]
@@ -77,6 +78,9 @@ def _shunting(regex:str) -> list:
         out.append(last_op)
 
       stack.append(char)
+    
+    else:
+      raise Exception(f'Simbol not valid for regex: {char}')
 
   while len(stack) > 0:
     actual_stack = stack.pop()
