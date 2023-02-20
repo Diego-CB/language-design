@@ -1,4 +1,4 @@
-# from .alfabeto import ALPHABET
+from .alfabeto import OPERATORS
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -110,10 +110,3 @@ class SyntaxTree:
         nx.draw(G, with_labels=True)
 
         plt.show()
-
-if __name__ == '__main__':
-    from alfabeto import ALPHABET, OPERATORS
-
-    postfix = ['a', 'b', '*', '.', 'a', 'b', '*', '.', '.']
-    x = SyntaxTree(postfix)
-    x.showTree()
