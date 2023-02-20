@@ -18,6 +18,7 @@
 
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
+  - `Tree.py`: Implementación de arbol de sintaxis para regex.
 
 - **`Renders`**: Dentro de esta carpeta se encuentran las imagenes resultantes de los AFN
 
