@@ -3,8 +3,8 @@ from src import *
 if __name__ == '__main__':
     r = '(a|b)*a(a|b)(a|b)'
     r_ = toPostfix(r)
-    x = SyntaxTree(r_)
-    x.showTree()
+    r_tree = SyntaxTree(r_)
+    r_tree.showTree(r)
 
     '''
     ab * ab *

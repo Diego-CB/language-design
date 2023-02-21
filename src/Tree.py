@@ -1,6 +1,8 @@
 from .alfabeto import OPERATORS
 import networkx as nx
+from networkx.readwrite import json_graph
 import matplotlib.pyplot as plt
+from .filename import toFileName
 
 class Node:
     ''' Esta clase representa un nodo en el arbol de sintaxis
@@ -45,6 +47,7 @@ class SyntaxTree:
     def __init__(self, postfix:list) -> None:
         self.nodes = None
         self.edges = None
+        self.labels = None
         self.root = Node()
         self._fillTree(self.root, postfix)
         
@@ -60,7 +63,7 @@ class SyntaxTree:
             return
 
         actualNode.left = Node()
-        if actualNode.data in ['*', '?']:
+        if actualNode.data in ['*', '?', '+']:
             return self._fillTree(actualNode.left, postfix)
 
         actualNode.right = Node()
@@ -83,30 +86,45 @@ class SyntaxTree:
 
     # Dibujo de grafo
     def _getNodes(self, actualNode:Node) -> None:
-        actualToken = actualNode.data + str(actualNode.position)
-        self.nodes.append(actualToken)
+        self.nodes.append(actualNode.position)
+        self.labels[actualNode.position] = actualNode.data
 
         if actualNode.right is not None:
             right:Node = actualNode.right
-            self.edges.append((actualToken, right.data + str(right.position)))
+            self.edges.append((actualNode.position, right.position))
             self._getNodes(right)
         
         if actualNode.left is not None:
             left:Node = actualNode.left
-            self.edges.append((actualToken, left.data + str(left.position)))
+            self.edges.append((actualNode.position, left.position))
             self._getNodes(left)
 
-    def showTree(self):
-        G = nx.Graph()
-
+    def showTree(self, regex:str) -> None:
         if self.nodes is None:
             self.nodes = []
             self.edges = []
+            self.labels = {}
             self._getNodes(self.root)
 
-        G.add_nodes_from(self.nodes)
+        G = nx.DiGraph()
         G.add_edges_from(self.edges)
 
-        nx.draw(G, with_labels=True)
+        dist = {i: {} for i in G.nodes()}
+        for n in self.edges:
+            source = n[0]
+            target = n[1]
+            dist[source][target] = 10
 
-        plt.show()
+        # Draw the binary tree using NetworkX
+        nx.draw_networkx(
+            G, pos=nx.planar_layout(G, scale=100),
+            node_color=[
+                ('grey' if n != 0 else 'red') for n in self.nodes
+            ],
+            edge_color='k', width=2, node_size=350,
+            labels=self.labels, font_size=15, font_color='k'
+        )
+
+        # Show the plot
+        plt.axis('off')
+        plt.savefig(fname = './Renders/Tree_' + toFileName(regex))
