@@ -11,23 +11,23 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from .alfabeto import ALPHABET
+from .alfabeto import ALPHABET, OPERATORS
 
 _ORDER = {
-  '*': 1,
-  '|': 2,
+  '*': 3,
+  '+': 3,
+  '?': 3,
   '.': 2,
+  '|': 1,
   '(': 0,
 }
 
-def _shunting(regex:str) -> list:
+def _shunting(regex:list) -> list:
     '''
     Implementacion del algoritmo Shunting Yard adaptado a regex
     Ademas, agrega operador . al postfix final
     Referencia: https://www.cs.buap.mx/~andrex/estructuras/AlgoritmoPolacasPosfijo.pdf
     '''
-    regex = regex.replace(' ', '')
-    regex = list(regex)
     out:list = [] # Stack de salida
     stack:list = [] # Stack de stack de operadores
 
@@ -35,14 +35,6 @@ def _shunting(regex:str) -> list:
         char = regex.pop(0)
 
         if char in ALPHABET:
-            if len(out) > 0 and '|' not in stack:
-                last_char = out[-1]
-                if (
-                    last_char in ALPHABET
-                    or last_char in ['*', '?']
-                ):
-                    stack.append('.')
-
             out.append(char)
 
         elif char == '(':
@@ -54,28 +46,25 @@ def _shunting(regex:str) -> list:
             while next_char != '(':
                 out.append(next_char)
                 next_char = stack.pop()
-                
+
                 if next_char != '(' and len(stack) == 0:
                     raise Exception('Error: regex not valid.\n"(" missing')
-            
+
             if len(regex) > 0:
                 next_char = regex[0]
                 if next_char in ['*', '?']:
                     regex.pop(0)
-                    if next_char != out[-1]:
-                        out.append(next_char)
+                    out.append(next_char)
 
-        elif char in ['*', '?']:
-            if char != out[-1]:
-                out.append(char)
+        elif char in OPERATORS:
+            while len(stack) > 0 and stack[-1] != '(':
+                last_op = stack[-1]
 
-        elif char in ['|', '.']:
-            if char == out[-1]: continue
-
-            last_op = stack[-1]
-            if _ORDER[char] <= _ORDER[last_op]:
-                stack.pop()
-                out.append(last_op)
+                if _ORDER[char] <= _ORDER[last_op]:
+                    stack.pop()
+                    out.append(last_op)
+                else:
+                    break
 
             stack.append(char)
     
@@ -91,6 +80,39 @@ def _shunting(regex:str) -> list:
 
     return out
 
+def _preprocess(regex:list) -> list:
+    '''Agrega puntos de concatenacion a una regex en infix'''
+    out = []
+
+    while len(regex) > 0:
+        actual = regex.pop(0)
+        last = '' if len(out) == 0 else out[-1]
+        
+        if (
+            actual in ALPHABET
+            and (
+                last in ['*', '?', '+', ')']
+                or last in ALPHABET
+            )
+        ):
+            out.append('.')
+
+        if (
+            actual == '('
+            and (
+                last in ALPHABET
+                or last in ['*', '?', '+', ')']
+            )
+        ):
+            out.append('.')
+
+        out.append(actual)
+
+    return out + ['.', '#']
+
 def toPostfix(regex:str) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
+    regex = regex.replace(' ', '')
+    regex = list(regex)
+    regex = regex if '.' in regex else _preprocess(regex)
     return _shunting(regex)
