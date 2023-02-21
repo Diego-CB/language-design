@@ -30,7 +30,7 @@
 2. Ingrese una regex valida
 3. Si no existen errores en ejecución, se escribirá un achivo `AFN_(regex).png` con la imagen resultante en la carpeta **`Renders`**.
   > path de la imagen: `./Renders/AFN_(regex).png`
-   Si existen errores en la regex de entrada se desplegara un error con la descripcion
+  > Si existen errores en la regex de entrada se desplegara un error con la descripcion
 
 ## 🤓 Autor
 
