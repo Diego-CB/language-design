@@ -1,10 +1,12 @@
 from src import *
 
 if __name__ == '__main__':
-    r = '(a|b)*a(a|b)(a|b)'
+    r = '(a|^)b(a+)c?'
     r_ = toPostfix(r)
     r_tree = SyntaxTree(r_)
     r_tree.showTree(r)
+    afn = createAFN(r_tree)
+    print(afn)
 
     '''
     ab * ab *

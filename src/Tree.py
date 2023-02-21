@@ -125,6 +125,4 @@ class SyntaxTree:
             labels=self.labels, font_size=15, font_color='k'
         )
 
-        # Show the plot
-        plt.axis('off')
         plt.savefig(fname = './Renders/Tree_' + toFileName(regex))
