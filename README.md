@@ -26,10 +26,13 @@
 
 ## 🕹️ Getting Started
 
-1. Ejecute el archivo `main.py`.
-2. Ingrese una regex valida
-3. Si no existen errores en ejecución, se escribirá un achivo `AFN_(regex).png` con la imagen resultante en la carpeta **`Renders`**. Si existen errores en la regex de entrada se desplegara un error con la descripcion.
-  > path de la imagen: `./Renders/AFN_(regex).png`
+- Ejecute el archivo `main.py`.
+
+- Si selecciona: Crear un AFN:
+  1. Ingrese una regex valida
+  2. Se abrirán 2 pantallas. Una con el arbol sintáctico y la regex en postfix y otra con el AFN generado.
+  3. Se escribiran 2 archivos `AFN_(regex).png` y `Tree_(regex).png` con la imagen resultante en la  carpeta **`Renders`**. Si existen errores en la regex de entrada se desplegara un error con la descripcion.
+    > path de la imagen: `./Renders/AFN_(regex).png` y `./Renders/Tree_(regex).png`
 
 ## 🤓 Autor
 
