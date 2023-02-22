@@ -1,0 +1,56 @@
+import networkx as nx
+from networkx.readwrite import json_graph
+import matplotlib.pyplot as plt
+from .filename import toFileName
+from .Automata import AFN
+
+def drawAFN(afn:AFN, filename):
+    G = nx.DiGraph()
+    edges = []
+    edge_labels = {}
+    color_map = []
+    dist = {}
+    
+    for k in afn.transitions.keys():
+        start = k[0]
+        symbol = k[1]
+
+        for finish in afn.transitions[k]:
+            edge_labels[(start, finish)] = symbol
+            edges.append((start, finish))
+            dist[(start, finish)] = 50
+
+            if (finish, start) in edge_labels.keys():
+                new_label = f'({finish}, {start})->{edge_labels[(finish, start)]}\n({start}, {finish})->{symbol}'
+                edge_labels[(finish, start)] = new_label
+                edge_labels[(start, finish)] = new_label
+
+    G.add_edges_from(edges)
+    for node in G.nodes():
+        if node == afn.initial:
+            color_map.append('skyblue')
+        elif node == afn.final:
+            color_map.append('#f99')
+        else:
+            color_map.append('grey')
+
+    pos = nx.spring_layout(G, scale=10)
+    plt.figure()
+    nx.draw(
+        G, pos, edge_color='black', width=1, linewidths=1,
+        node_size=500, node_color=color_map, alpha=0.6,
+        labels={node: node for node in G.nodes()},
+
+    )
+    nx.draw_networkx_edge_labels(
+        G, pos,
+        edge_labels=edge_labels,
+        bbox={
+            'boxstyle':'circle',
+            'ec':(1, 0, 0, 0),
+            'fc':(1.0, 1.0, 1.0)
+        },
+    )
+    plt.savefig(fname = './Renders/AFN_' + toFileName(filename))
+    plt.show()
+    plt.close()

@@ -1,14 +1,39 @@
-from src import *
+from drivers import *
+
+def bye():
+    print('\n-> Finalizando Ejecucion\n')
 
 if __name__ == '__main__':
-    r = '(a|^)b(a+)c?'
-    r_ = toPostfix(r)
-    r_tree = SyntaxTree(r_)
-    r_tree.showTree(r)
-    afn = createAFN(r_tree)
-    print(afn)
 
+    actions = {
+        '1': [createAFN, 'Crear un AFN'],
+        's': [bye, 'salir'],
+    }
+
+    menuString = '------ Menu ------\n'
+
+    for key in actions.keys():
+        menuString += f'{key}. {str(actions[key][1])}\n'
+
+    menuString += '-> '
+    option = None
+
+    while option != 's':
+        option = input(menuString)
+
+        if option not in actions.keys():
+            print('Error: Elija una opcion valida')
+            continue
+            
+        if option == 's':
+            actions[option][0]
+            continue
+
+        r = input('Ingrese una regex: ')
+        actions[option][0](r)
+    
     '''
+    Ejempos de Regex
     ab * ab *
     0? (1? )? 0 *
     (a*|b*)c

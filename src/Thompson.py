@@ -59,7 +59,7 @@ class Thompson:
             new_value = [q + offset for q in afn.transitions[k]]
 
             if new_key not in transitions.keys():
-                transitions[new_key] = [new_value]
+                transitions[new_key] = new_value
             else:
                 transitions[new_key].append(new_value)
 
@@ -119,7 +119,7 @@ class Thompson:
                 transitions = left.transitions
                 transitions[(initial, '^')] = [left.initial, final]
                 transitions[(left.final, '^')] = [final, left.initial]
-            
+
             # caso kleen +
             case '+':
                 copy:AFN = self._copyAFN(left)
@@ -141,7 +141,7 @@ class Thompson:
                 transitions[(copy.final, '^')] = [final, copy.initial]
 
                 kleen_AFN = AFN(estados, symbols, initial, final, transitions)
-                return self._concat(left, kleen_AFN)
+                return self._concat(kleen_AFN, left)
             
             # caso nullable
             case '?':
@@ -164,6 +164,6 @@ class Thompson:
         return AFN(estados, symbols, initial, final, transitions)
 
 
-def createAFN(arbol:SyntaxTree) -> AFN:
+def createAFN_thompson(arbol:SyntaxTree) -> AFN:
     t_instance = Thompson()
     return t_instance._thompson(arbol.root)

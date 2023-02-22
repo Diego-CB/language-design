@@ -1,4 +1,4 @@
-from .alfabeto import OPERATORS
+from .alfabeto import OPERATORS, ALPHABET
 import networkx as nx
 from networkx.readwrite import json_graph
 import matplotlib.pyplot as plt
@@ -18,6 +18,7 @@ class Node:
         self.left:self = None
         self.right:self = None
         self.position:int = None
+        self.printId:int = None
 
 class SyntaxTree:
     ''' Esta clase representa un arbol de sintaxis
@@ -29,7 +30,7 @@ class SyntaxTree:
         root (Node): Raiz del arbol de sintaxis
     '''
 
-    # Variable estatica _i: Posicion de caracteres en el arbol
+    # Variable estatica _i: Posicion de symbolos en el arbol
     _i = 0
 
     def get_i(self):
@@ -42,6 +43,20 @@ class SyntaxTree:
 
     def reset_i(self):
         self.set_i(0)
+    
+    # Variable estatica _i: Posicion de caracteres en el arbol
+    _pid = 0
+
+    def get_pid(self):
+        return type(self)._pid
+
+    def set_pid(self, val):
+        type(self)._pid = val
+
+    pidi = property(get_pid, set_pid)
+
+    def reset_pid(self):
+        self.set_pid(0)
 
     # Constructor
     def __init__(self, postfix:list) -> None:
@@ -49,18 +64,27 @@ class SyntaxTree:
         self.edges = None
         self.labels = None
         self.root = Node()
+        self.regex = ''.join(postfix)
         self._fillTree(self.root, postfix)
+        self.reset_i()
+
         
     # Auxiliar del constructor
     def _fillTree(self, actualNode:Node, postfix:str) -> Node:
         actualNode.data = postfix.pop()
-        actual_i = self.get_i()
-        actualNode.position = actual_i
-        self.set_i(actual_i + 1)
-        if len(postfix) == 0:
-            if self.root == "#":
-                self.reset_i()
-            return
+
+        # Print Id 
+        actual_pid = self.get_pid()
+        actualNode.printId = actual_pid
+        self.set_pid(actual_pid + 1)
+
+        # position (si es symbolo del alfabeto)
+        if actualNode.data in ALPHABET and actualNode.data != '^':
+            actual_i = self.get_i()
+            actualNode.position = actual_i
+            self.set_i(actual_i + 1)
+
+        if len(postfix) == 0: return
 
         actualNode.left = Node()
         if actualNode.data in ['*', '?', '+']:
@@ -71,13 +95,13 @@ class SyntaxTree:
 
         if left[0] in OPERATORS:
             params = 2 if left[0] in ['|', '.'] else 1
-            
+
             while params > 0:
                 params -= 1
                 tempChar = postfix.pop()
 
                 if tempChar in OPERATORS:
-                    params += 2 if left in ['|', '.'] else 1
+                    params += 2 if tempChar in ['|', '.'] else 1
 
                 left.insert(0, tempChar)
 
@@ -86,17 +110,17 @@ class SyntaxTree:
 
     # Dibujo de grafo
     def _getNodes(self, actualNode:Node) -> None:
-        self.nodes.append(actualNode.position)
-        self.labels[actualNode.position] = actualNode.data
+        self.nodes.append(actualNode.printId)
+        self.labels[actualNode.printId] = actualNode.data
 
         if actualNode.right is not None:
             right:Node = actualNode.right
-            self.edges.append((actualNode.position, right.position))
+            self.edges.append((actualNode.printId, right.printId))
             self._getNodes(right)
         
         if actualNode.left is not None:
             left:Node = actualNode.left
-            self.edges.append((actualNode.position, left.position))
+            self.edges.append((actualNode.printId, left.printId))
             self._getNodes(left)
 
     def showTree(self, regex:str) -> None:
@@ -117,12 +141,13 @@ class SyntaxTree:
 
         # Draw the binary tree using NetworkX
         nx.draw_networkx(
-            G, pos=nx.planar_layout(G, scale=100),
+            G, pos=nx.planar_layout(G, scale=10), alpha=0.6,
             node_color=[
-                ('grey' if n != 0 else 'red') for n in self.nodes
+                ('grey' if n != 0 else '#f99') for n in self.nodes
             ],
             edge_color='k', width=2, node_size=350,
-            labels=self.labels, font_size=15, font_color='k'
+            labels=self.labels, font_size=12, font_color='k'
         )
 
+        plt.title(self.regex)
         plt.savefig(fname = './Renders/Tree_' + toFileName(regex))

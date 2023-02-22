@@ -108,11 +108,11 @@ def _preprocess(regex:list) -> list:
 
         out.append(actual)
 
-    return out + ['.', '#']
+    return out
 
-def toPostfix(regex:str) -> list:
+def toPostfix(regex:str, augmented=False) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
     regex = regex.replace(' ', '')
     regex = list(regex)
     regex = regex if '.' in regex else _preprocess(regex)
-    return _shunting(regex)
+    return _shunting(regex) + (['#', '.'] if augmented else [])
