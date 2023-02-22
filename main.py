@@ -13,7 +13,7 @@ if __name__ == '__main__':
     menuString = '------ Menu ------\n'
 
     for key in actions.keys():
-        menuString += f'{key}. {str(actions[key][1])}\n'
+        menuString += f'  {key}. {str(actions[key][1])}\n'
 
     menuString += '-> '
     option = None

@@ -9,21 +9,25 @@ def drawAFN(afn:AFN, filename):
     edges = []
     edge_labels = {}
     color_map = []
-    dist = {}
     
     for k in afn.transitions.keys():
         start = k[0]
         symbol = k[1]
 
         for finish in afn.transitions[k]:
-            edge_labels[(start, finish)] = symbol
             edges.append((start, finish))
-            dist[(start, finish)] = 50
 
             if (finish, start) in edge_labels.keys():
                 new_label = f'({finish}, {start})->{edge_labels[(finish, start)]}\n({start}, {finish})->{symbol}'
                 edge_labels[(finish, start)] = new_label
                 edge_labels[(start, finish)] = new_label
+            
+            elif (start, finish) in edge_labels.keys():
+                new_label = f'{edge_labels[(start, finish)]}, {symbol}'
+                edge_labels[(start, finish)] = new_label
+
+            else:
+                edge_labels[(start, finish)] = symbol
 
     G.add_edges_from(edges)
     for node in G.nodes():
