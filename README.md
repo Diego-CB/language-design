@@ -8,8 +8,8 @@
 
   - [x] Validación de errores para expresión regular y balanceo de 𝑟
   - [x] Conversión de de infix a postfix para producción de 𝑟' en postfix
-  - [ ] Implementación del algoritmo de Construcción de Thompson con base en 𝑟'    
-  - [ ] Mostrar en pantalla el listado solicitado de descripciones sobre los AFN generados
+  - [x] Implementación del algoritmo de Construcción de Thompson con base en 𝑟'    
+  - [x] Mostrar en pantalla el listado solicitado de descripciones sobre los AFN generados
   - [x] Ejercicios Pre-Laboratorio
 
 ## 🗃️ Estructura de Archivos
