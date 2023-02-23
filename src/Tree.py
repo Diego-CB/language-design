@@ -11,7 +11,8 @@ class Node:
         root (data): valor guardado en el nodo
         left (Node): Hijo izquierdo del nodo
         right (Node): Hijo derecho del nodo
-        position (int): Posicion del caracter
+        position (int): Posicion del symbolo (en caso sea simbolo)
+        printId (int): Posicion del caracter para impresion del arbol
     '''
     def __init__(self) -> None:
         self.data:str = None
@@ -24,7 +25,8 @@ class SyntaxTree:
     ''' Esta clase representa un arbol de sintaxis
 
     Atributos:
-        i (int): Atributo interno para posicion de caracteres
+        i (int): Atributo interno para posicion de caracteres para (impresion)
+        pidi (int): Atributo interno para posicion de caracteres
         nodes (list): Atributo interno para dibujo de grafo
         edges (list): Atributo interno para dibujo de grafo
         root (Node): Raiz del arbol de sintaxis
@@ -53,7 +55,7 @@ class SyntaxTree:
     def set_pid(self, val):
         type(self)._pid = val
 
-    pidi = property(get_pid, set_pid)
+    pid = property(get_pid, set_pid)
 
     def reset_pid(self):
         self.set_pid(0)
@@ -123,6 +125,18 @@ class SyntaxTree:
             self.edges.append((actualNode.printId, left.printId))
             self._getNodes(left)
 
+    def _showNode(self, regex:str, G:nx.DiGraph) -> None:
+        G.add_nodes_from(self.nodes)
+        # Draw the binary tree using NetworkX
+        nx.draw_networkx(
+            G, alpha=0.6, node_color='#f99',
+            width=2, node_size=350,
+            labels=self.labels, font_size=12, font_color='k'
+        )
+
+        plt.title(self.regex)
+        plt.savefig(fname = './Renders/Tree_' + toFileName(regex))
+
     def showTree(self, regex:str) -> None:
         if self.nodes is None:
             self.nodes = []
@@ -131,6 +145,9 @@ class SyntaxTree:
             self._getNodes(self.root)
 
         G = nx.DiGraph()
+        if len(self.nodes) == 1:
+            return self._showNode(regex, G)
+
         G.add_edges_from(self.edges)
 
         dist = {i: {} for i in G.nodes()}
