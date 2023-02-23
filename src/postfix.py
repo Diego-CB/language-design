@@ -47,15 +47,6 @@ def _shunting(regex:list) -> list:
                 out.append(next_char)
                 next_char = stack.pop()
 
-                if next_char != '(' and len(stack) == 0:
-                    raise Exception('Error: regex not valid.\n"(" missing')
-
-            if len(regex) > 0:
-                next_char = regex[0]
-                if next_char in ['*', '?']:
-                    regex.pop(0)
-                    out.append(next_char)
-
         elif char in OPERATORS:
             while len(stack) > 0 and stack[-1] != '(':
                 last_op = stack[-1]
@@ -79,6 +70,14 @@ def _shunting(regex:list) -> list:
         if actual_stack in ['(', ')']: raise Exception('Error: regex not valid.\n"(" missing')
 
     return out
+
+def _checkParen(regex:list) -> None:
+    '''Verifica si faltan parentesis en la regex'''
+    open_count = regex.count('(')
+    close_count = regex.count(')')
+    if open_count != close_count:
+        missing = '(' if open_count < close_count else ')'
+        raise Exception(f'"{missing}" missing')
 
 def _preprocess(regex:list) -> list:
     '''Agrega puntos de concatenacion a una regex en infix'''
@@ -110,9 +109,26 @@ def _preprocess(regex:list) -> list:
 
     return out
 
+def _postProcess(regex:list) -> list:
+    out = []
+
+    while len(regex) > 0:
+        actual = regex.pop(0)
+        last = '' if len(out) == 0 else out[-1]
+
+        if actual in ['*', '?', '+'] and last in ['*', '?', '+']:
+            print(f'-> optimizacion realizada: {actual}{actual} = {actual}')
+            continue
+
+        out.append(actual)
+
+    return out
+
 def toPostfix(regex:str, augmented=False) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
     regex = regex.replace(' ', '')
     regex = list(regex)
+    _checkParen(regex)
     regex = regex if '.' in regex else _preprocess(regex)
-    return _shunting(regex) + (['#', '.'] if augmented else [])
+    regex = _shunting(regex) + (['#', '.'] if augmented else [])
+    return _postProcess(regex)

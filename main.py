@@ -1,36 +1,17 @@
 from drivers import *
 
-def bye():
-    print('\n-> Finalizando Ejecucion\n')
-
 if __name__ == '__main__':
+    print('------ Creacion de AFN ------')
+    r = None
 
-    actions = {
-        '1': [createAFN, 'Crear un AFN'],
-        's': [bye, 'salir'],
-    }
+    while r != '-':
+        r = input('Ingrese una regex o (-) para salir\n-> ')
 
-    menuString = '------ Menu ------\n'
-
-    for key in actions.keys():
-        menuString += f'  {key}. {str(actions[key][1])}\n'
-
-    menuString += '-> '
-    option = None
-
-    while option != 's':
-        option = input(menuString)
-
-        if option not in actions.keys():
-            print('Error: Elija una opcion valida')
-            continue
-            
-        if option == 's':
-            actions[option][0]
+        if r == '-':
+            print('-> Finalizando Ejecucion\n')
             continue
 
-        r = input('Ingrese una regex: ')
-        actions[option][0](r)
+        createAFN(r)
     
     '''
     Ejempos de Regex
