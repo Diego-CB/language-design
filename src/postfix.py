@@ -60,14 +60,11 @@ def _shunting(regex:list) -> list:
             stack.append(char)
     
         else:
-            raise Exception(f'Simbol not valid for regex: {char}')
+            raise Exception(f'\nSimbol not valid for regex: {char}\n')
 
     while len(stack) > 0:
         actual_stack = stack.pop()
-        if actual_stack == out[-1]: continue
         out.append(actual_stack)
-
-        if actual_stack in ['(', ')']: raise Exception('Error: regex not valid.\n"(" missing')
 
     return out
 
@@ -77,7 +74,7 @@ def _checkParen(regex:list) -> None:
     close_count = regex.count(')')
     if open_count != close_count:
         missing = '(' if open_count < close_count else ')'
-        raise Exception(f'"{missing}" missing')
+        raise Exception(f'\n"{missing}" missing\n')
 
 def _preprocess(regex:list) -> list:
     '''Agrega puntos de concatenacion a una regex en infix'''

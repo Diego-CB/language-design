@@ -62,17 +62,19 @@ class SyntaxTree:
 
     # Constructor
     def __init__(self, postfix:list) -> None:
+        '''Crea un arbol de sintaxis a partir de una regex en postfix'''
         self.nodes = None
         self.edges = None
         self.labels = None
         self.root = Node()
         self.regex = ''.join(postfix)
         self._fillTree(self.root, postfix)
-        self.reset_i()
+        self.reset_pid()
 
         
     # Auxiliar del constructor
     def _fillTree(self, actualNode:Node, postfix:str) -> Node:
+        '''Recorre la expresion postfix de forma recursiva para llenar el arbol'''
         actualNode.data = postfix.pop()
 
         # Print Id 
@@ -86,6 +88,10 @@ class SyntaxTree:
             actualNode.position = actual_i
             self.set_i(actual_i + 1)
 
+        # Si la operacion no tiene operadores
+        if actualNode.data in OPERATORS and len(postfix) == 0:
+            raise Exception(f'\nOperator missing for {actualNode.data}\n')
+
         if len(postfix) == 0: return
 
         actualNode.left = Node()
@@ -96,22 +102,31 @@ class SyntaxTree:
         left:list = [postfix.pop()]
 
         if left[0] in OPERATORS:
+            lastOp = [0]
             params = 2 if left[0] in ['|', '.'] else 1
 
             while params > 0:
+                if len(postfix) == 0:
+                    raise Exception(f'\nOperator missing for {lastOp}\n')
+                
                 params -= 1
                 tempChar = postfix.pop()
 
                 if tempChar in OPERATORS:
+                    lastOp = tempChar
                     params += 2 if tempChar in ['|', '.'] else 1
 
                 left.insert(0, tempChar)
+
+        if len(postfix) == 0:
+            raise Exception(f'\nOperator missing for {actualNode.data}\n')
 
         self._fillTree(actualNode.left, left)
         self._fillTree(actualNode.right, postfix)
 
     # Dibujo de grafo
     def _getNodes(self, actualNode:Node) -> None:
+        '''Guarda la informacion para impresion de arbol'''
         self.nodes.append(actualNode.printId)
         self.labels[actualNode.printId] = actualNode.data
 
@@ -125,36 +140,22 @@ class SyntaxTree:
             self.edges.append((actualNode.printId, left.printId))
             self._getNodes(left)
 
-    def _showNode(self, regex:str, G:nx.DiGraph) -> None:
-        G.add_nodes_from(self.nodes)
-        # Draw the binary tree using NetworkX
-        nx.draw_networkx(
-            G, alpha=0.6, node_color='#f99',
-            width=2, node_size=350,
-            labels=self.labels, font_size=12, font_color='k'
-        )
-
-        plt.title(self.regex)
-        plt.savefig(fname = './Renders/Tree_' + toFileName(regex))
-
     def showTree(self, regex:str) -> None:
+        '''Muestra el arbol de sintaxis en forma visual'''
+        # Nodos y aristas
         if self.nodes is None:
             self.nodes = []
             self.edges = []
             self.labels = {}
             self._getNodes(self.root)
 
+        # Dibujo de Arbol
         G = nx.DiGraph()
+
         if len(self.nodes) == 1:
-            return self._showNode(regex, G)
-
-        G.add_edges_from(self.edges)
-
-        dist = {i: {} for i in G.nodes()}
-        for n in self.edges:
-            source = n[0]
-            target = n[1]
-            dist[source][target] = 10
+            G.add_nodes_from(self.nodes)
+        else:
+            G.add_edges_from(self.edges)
 
         # Draw the binary tree using NetworkX
         nx.draw_networkx(
