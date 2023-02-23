@@ -19,7 +19,7 @@
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
   - `Tree.py`: Implementación de arbol de sintaxis para regex.
-  - `filename.py`: filename para archivos (render de automatas y arboles)
+  - `util.py`: funcinones auxiliares
   - `Automata.py`: Objectos Automatas
   - `DrawAutomata.py`: Implementación de representacion visual de automatas
   - `Thompson.py`: Implementación de algoritmo de Thompson para construccion de AFN's.
