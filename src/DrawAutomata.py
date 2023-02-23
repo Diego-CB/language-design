@@ -1,10 +1,23 @@
+'''
+*************************************************
+Universidad del Valle de Guatemala
+Diseño de Lenguajes de Programación
+
+DrawAutomata.py
+- Implementaciones para despliegue visual de
+  automatas
+
+Autor: Diego Cordova - 20212
+*************************************************
+'''
+
 import networkx as nx
-from networkx.readwrite import json_graph
 import matplotlib.pyplot as plt
-from .filename import toFileName
+from .util import toFileName
 from .Automata import AFN
 
 def drawAFN(afn:AFN, filename):
+    '''Dibuja un AFN en pantalla'''
     G = nx.DiGraph()
     edges = []
     edge_labels = {}

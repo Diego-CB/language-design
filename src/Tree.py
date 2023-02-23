@@ -1,8 +1,19 @@
+'''
+*************************************************
+Universidad del Valle de Guatemala
+Diseño de Lenguajes de Programación
+
+Tree.py
+- Implementacion de arbol de sintaxis
+
+Autor: Diego Cordova - 20212
+*************************************************
+'''
+
 from .alfabeto import OPERATORS, ALPHABET
 import networkx as nx
-from networkx.readwrite import json_graph
 import matplotlib.pyplot as plt
-from .filename import toFileName
+from .util import toFileName
 
 class Node:
     ''' Esta clase representa un nodo en el arbol de sintaxis

@@ -25,7 +25,6 @@ _ORDER = {
 def _shunting(regex:list) -> list:
     '''
     Implementacion del algoritmo Shunting Yard adaptado a regex
-    Ademas, agrega operador . al postfix final
     Referencia: https://www.cs.buap.mx/~andrex/estructuras/AlgoritmoPolacasPosfijo.pdf
     '''
     out:list = [] # Stack de salida
@@ -85,19 +84,12 @@ def _preprocess(regex:list) -> list:
         last = '' if len(out) == 0 else out[-1]
         
         if (
-            actual in ALPHABET
-            and (
+            (
+                actual == '('
+                or actual in ALPHABET
+            ) and (
                 last in ['*', '?', '+', ')']
                 or last in ALPHABET
-            )
-        ):
-            out.append('.')
-
-        if (
-            actual == '('
-            and (
-                last in ALPHABET
-                or last in ['*', '?', '+', ')']
             )
         ):
             out.append('.')
