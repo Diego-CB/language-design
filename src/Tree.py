@@ -14,6 +14,8 @@ from .alfabeto import OPERATORS, ALPHABET
 import networkx as nx
 import matplotlib.pyplot as plt
 from .util import toFileName
+import graphviz
+import os
 
 class Node:
     ''' Esta clase representa un nodo en el arbol de sintaxis
@@ -138,21 +140,24 @@ class SyntaxTree:
     # Dibujo de grafo
     def _getNodes(self, actualNode:Node) -> None:
         '''Guarda la informacion para impresion de arbol'''
-        self.nodes.append(actualNode.printId)
-        self.labels[actualNode.printId] = actualNode.data
+        actual = actualNode.data + str(actualNode.printId)
+        self.nodes.append(actual)
 
         if actualNode.right is not None:
             right:Node = actualNode.right
-            self.edges.append((actualNode.printId, right.printId))
+            right_data = right.data + str(right.printId)
+            self.edges.append((actual, right_data))
             self._getNodes(right)
         
         if actualNode.left is not None:
             left:Node = actualNode.left
-            self.edges.append((actualNode.printId, left.printId))
+            left_data = left.data + str(left.printId)
+            self.edges.append((actual, left_data))
             self._getNodes(left)
 
     def showTree(self, regex:str) -> None:
         '''Muestra el arbol de sintaxis en forma visual'''
+
         # Nodos y aristas
         if self.nodes is None:
             self.nodes = []
@@ -161,22 +166,16 @@ class SyntaxTree:
             self._getNodes(self.root)
 
         # Dibujo de Arbol
-        G = nx.DiGraph()
+        G = graphviz.Digraph()
 
-        if len(self.nodes) == 1:
-            G.add_nodes_from(self.nodes)
-        else:
-            G.add_edges_from(self.edges)
+        for node in self.nodes:
+            G.node(node, shape='circle')
+        
+        for edge in self.edges:
+            G.edge(*edge)
 
-        # Draw the binary tree using NetworkX
-        nx.draw_networkx(
-            G, pos=nx.planar_layout(G, scale=10), alpha=0.6,
-            node_color=[
-                ('grey' if n != 0 else '#f99') for n in self.nodes
-            ],
-            edge_color='k', width=2, node_size=350,
-            labels=self.labels, font_size=12, font_color='k'
-        )
+        # render the graph
+        path = './Renders/Tree_' + toFileName(regex)
+        G.render(filename=path, format='png')
+        os.remove(path)
 
-        plt.title(self.regex)
-        plt.savefig(fname = './Renders/Tree_' + toFileName(regex))
