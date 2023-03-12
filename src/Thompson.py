@@ -1,6 +1,7 @@
-from .Tree import SyntaxTree, Node
-from .Automata import AFN
+from .Objects.Tree import SyntaxTree, Node
+from .Objects import AFN
 from .alfabeto import ALPHABET
+from .util import delete_duplicates
 
 class Thompson:
     '''Objecto interno para construccion de AFN por Thompson
@@ -27,6 +28,7 @@ class Thompson:
 
         # Simbolos
         symbols = left.symbols + right.symbols
+        symbols = delete_duplicates(symbols)
 
         # Estados
         estados = left.estados + right.estados
@@ -99,6 +101,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = left.symbols + right.symbols
+                symbols = delete_duplicates(symbols)
 
                 # Estados
                 estados = [initial, final] + left.estados + right.estados
@@ -122,6 +125,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = left.symbols
+                symbols = delete_duplicates(symbols)
 
                 # Estados
                 estados = [initial, final] + left.estados
@@ -141,6 +145,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = copy.symbols
+                symbols = delete_duplicates(symbols)
 
                 # Estados
                 estados = [initial, final] + copy.estados

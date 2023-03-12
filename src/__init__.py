@@ -1,4 +1,4 @@
 from .postfix import toPostfix
-from .Tree import SyntaxTree
+from .Objects import SyntaxTree
 from .Thompson import createAFN_thompson
-from .DrawAutomata import drawAFN
+from .Subconjuntos import subconjuntos

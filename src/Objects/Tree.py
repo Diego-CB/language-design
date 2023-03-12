@@ -10,10 +10,9 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from .alfabeto import OPERATORS, ALPHABET
+from ..alfabeto import OPERATORS, ALPHABET
 import networkx as nx
-import matplotlib.pyplot as plt
-from .util import toFileName
+from ..util import toFileName
 import graphviz
 import os
 
@@ -155,9 +154,8 @@ class SyntaxTree:
             self.edges.append((actual, left_data))
             self._getNodes(left)
 
-    def showTree(self, regex:str) -> None:
+    def showTree(self) -> None:
         '''Muestra el arbol de sintaxis en forma visual'''
-
         # Nodos y aristas
         if self.nodes is None:
             self.nodes = []
@@ -174,8 +172,8 @@ class SyntaxTree:
         for edge in self.edges:
             G.edge(*edge)
 
-        # render the graph
-        path = './Renders/Tree_' + toFileName(regex)
+        # render del arbol
+        path = './Renders/Tree'
         G.render(filename=path, format='png')
         os.remove(path)
 

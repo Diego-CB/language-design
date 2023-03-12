@@ -10,11 +10,12 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-def toFileName(filename:str) -> str:
-  '''Fromatea una regex para nombre de un archivo'''
-  filename = filename.replace('*', '_kleen_')
-  filename = filename.replace('+', '_kleen_')
-  filename = filename.replace('?', '_kleen_')
-  filename = filename.replace('|', '_or_')
+def delete_duplicates(arr:list) -> list:
+  ''' Elimina los elementos duplicados de un array'''
+  newArr:list = []
 
-  return filename
+  for n in arr:
+    if n not in newArr:
+      newArr.append(n)
+
+  return newArr
