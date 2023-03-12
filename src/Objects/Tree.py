@@ -11,8 +11,6 @@ Autor: Diego Cordova - 20212
 '''
 
 from ..alfabeto import OPERATORS, ALPHABET
-import networkx as nx
-from ..util import toFileName
 import graphviz
 import os
 
