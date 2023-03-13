@@ -45,16 +45,16 @@ def directCons(Stree:SyntaxTree) -> AFD:
                 new_Dstate = SubState(U)
                 Dstates.append(new_Dstate)
                 transitions[(S, a)] = new_Dstate
-                if '#' in new_Dstate.states:
-                    finals.append(S)
 
             else:
-                next_state = getDState(Dstates, U)
-                transitions[(S, a)] = next_state
-                if '#' in next_state.states:
-                    finals.append(S)
+                transitions[(S, a)] = getDState(Dstates, U)
 
         S = get_unmarked(Dstates)
+
+    finish_index = len(symbols) - 1
+    for obj in Dstates:
+        if finish_index in obj.states:
+            finals.append(obj)
 
     return enumStates(
         estados=Dstates,

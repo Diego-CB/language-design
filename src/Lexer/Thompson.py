@@ -19,7 +19,7 @@ class Thompson:
         self.STATE_NAME += 1
         return actualState
         
-    def _concat(self, right:AFN, left:AFN) -> AFN:
+    def _concat(self, left:AFN, right:AFN) -> AFN:
         '''Implementacion de concatenacion de AFN's '''
         # Estado inicial y final
         initial = left.initial

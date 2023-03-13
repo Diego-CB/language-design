@@ -113,16 +113,17 @@ class SyntaxTree:
 
         if len(postfix) == 0: return
 
+        # Hijo Derecho
         actualNode.left = Node()
         if actualNode.data in ['*', '?', '+']:
             return self._fillTree(actualNode.left, postfix)
 
         actualNode.right = Node()
-        left:list = [postfix.pop()]
+        right:list = [postfix.pop()]
 
-        if left[0] in OPERATORS:
+        if right[0] in OPERATORS:
             lastOp = [0]
-            params = 2 if left[0] in ['|', '.'] else 1
+            params = 2 if right[0] in ['|', '.'] else 1
 
             while params > 0:
                 if len(postfix) == 0:
@@ -135,13 +136,14 @@ class SyntaxTree:
                     lastOp = tempChar
                     params += 2 if tempChar in ['|', '.'] else 1
 
-                left.insert(0, tempChar)
+                right.insert(0, tempChar)
 
         if len(postfix) == 0:
             raise Exception(f'\nOperator missing for {actualNode.data}\n')
 
-        self._fillTree(actualNode.left, left)
-        self._fillTree(actualNode.right, postfix)
+        self._fillTree(actualNode.right, right)
+        # Hijo izquierdo
+        self._fillTree(actualNode.left, postfix)
 
     # Dibujo de grafo
     def _getNodes(self, actualNode:Node) -> None:
@@ -228,7 +230,6 @@ class SyntaxTree:
             En caso contrario se devuelve el firstpos del hijo izquierdo
             '''
             if self._nullable(n.left):
-                # la union de firstops de los hijos derecho e izquierdo
                 return self._firstpos(n.left) + self._firstpos(n.right)
 
             return self._firstpos(n.left)
@@ -242,7 +243,7 @@ class SyntaxTree:
 
         elif root in ['+', '*', '?']:
             ''' Si es un operador unario se devuelve firstpos del hijo '''
-            return self._firstpos(n.right)
+            return self._firstpos(n.left)
 
         else:
             ''' Si es un elemento del alfabeto se devuelve su posicion '''
@@ -357,4 +358,6 @@ class SyntaxTree:
         return follow_pos
     
     def get_firstPos(self):
-        return self._firstpos(self.root)
+        first = self._firstpos(self.root)
+        first.sort()
+        return first
