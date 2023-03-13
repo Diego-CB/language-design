@@ -11,7 +11,6 @@ Autor: Diego Cordova - 20212
 '''
 
 from abc import ABC, abstractmethod
-from ..util import delete_duplicates
 import graphviz
 import os
 
@@ -85,7 +84,7 @@ class AFN(Automata):
             subState = subState + self.e_closure(state)
 
         subState.append(q)
-        subState = delete_duplicates(subState)
+        subState = list(set(subState))
         subState.sort()
         return subState
     

@@ -3,13 +3,15 @@ from drivers import *
 if __name__ == '__main__':
     menu:dict = {
         '1': [createAFN, 'Creacion de AFN'],
-        '2': [AFN_to_AFD, 'Creacion de AFD por Construccion de subconuntos']
+        '2': [AFN_to_AFD, 'Creacion de AFD por Construccion de subconuntos'],
+        '3': [createAFD, 'Creacion de AFD por Construccion Directa']
     }
 
     menuString = '\
     Opciones:\n\
         1 - Creacion de AFN\n\
         2 - AFD por Subconjuntos\n\
+        3 - AFD por Construccion Directa\n\
         . - salir\n\
     -> \
     '
@@ -17,12 +19,14 @@ if __name__ == '__main__':
     while opcion != '.':
         opcion = input(menuString)
         if opcion == '.': continue
-        r = input('Ingrese una regex o (-) para salir\n-> ')
 
         if opcion in menu.keys():
             actions = menu[opcion]
-            print('----', actions[1], '----')
+            print('\n----', actions[1], '----\n')
+            r = input('Ingrese una regex o (-) para salir\n-> ')
             actions[0](r)
+        else:
+            print('Error: Ingrese una opcion valida')
     
     print('-> Finalizando Ejecucion\n')
 
