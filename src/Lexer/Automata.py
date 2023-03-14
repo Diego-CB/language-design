@@ -175,10 +175,4 @@ class AFD(Automata):
     def __repr__(self) -> str:
         return super().__repr__() + f'''
         Finals: {self.finals}
-        '''    
-
-
-
-
-
-
+        '''

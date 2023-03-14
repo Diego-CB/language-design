@@ -1,3 +1,16 @@
+'''
+*************************************************
+Universidad del Valle de Guatemala
+Diseño de Lenguajes de Programación
+
+DirectCons.py
+- Implementacion de construccion directa
+  para generacion de AFD's
+
+Autor: Diego Cordova - 20212
+*************************************************
+'''
+
 from .util import *
 from .Tree import SyntaxTree
 
