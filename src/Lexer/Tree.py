@@ -103,6 +103,8 @@ class SyntaxTree:
                 self.symbols.append(actualNode.data)
             
             actual_i = self.get_i()
+            if actualNode.data == '#':
+                self.final_index = actual_i
             self.symbolMap[actual_i] = actualNode.data
             actualNode.position = actual_i
             self.set_i(actual_i + 1)
@@ -309,7 +311,7 @@ class SyntaxTree:
             self._followpos(n.right)
             self._followpos(n.left)
 
-        elif root in ['*', '+', '?']:
+        elif root in ['*', '+']:
             '''
             En caso sea algun operador unario:
             Se le agrega el firstpos del nodo al lastpos del nodo
