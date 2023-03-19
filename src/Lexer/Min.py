@@ -32,12 +32,11 @@ def _getqKeys(destins, q):
 
     return q_keys
 
-def _compareMoves(q, last_q, destins:dict):
+def _compareMoves(q, last_q):
     if last_q is None: return False
-    for key in _getqKeys(destins, q):
-        last_key = (last_q, key[1])
-        if last_key not in destins.keys(): return False
-        if (destins[last_key] != destins[key]): return False
+    for a in symbols:
+        if _get_subgroup(q, a) != _get_subgroup(last_q, a):
+            return False
 
     return True
 
@@ -53,23 +52,18 @@ def min_AFD(afd_max:AFD) -> AFD:
 
     S:list = afd.finals
     F:list = [q for q in afd.estados if q not in afd.finals]
-    SubGroups = [S, F]
-    inPartition = False
+    SubGroups = [S] if len(F) == 0 else [S, F] 
+    inPartition = True
     
     while inPartition:
-        for G in SubGroups:
-            destins = {}
+        newG = []
+        q_inG = []
 
-            for a in symbols:
-                for q in G:
-                    destins[(q, a)] = _get_subgroup(q, a)
-            
-            newG = []
-            q_inG = []
+        for G in SubGroups:
             last_q = None
 
             for q in G:
-                if _compareMoves(q, last_q, destins):
+                if _compareMoves(q, last_q):
                     for sub in newG:
                         if last_q in sub:
                             sub.append(q)
@@ -88,6 +82,8 @@ def min_AFD(afd_max:AFD) -> AFD:
             if subq not in SubGroups:
                 inPartition = True
 
+        SubGroups = newG
+
     initial = None
     finals = []
     for index, state in enumerate(SubGroups):
@@ -97,8 +93,9 @@ def min_AFD(afd_max:AFD) -> AFD:
 
         for q in state:
             if q in afd.finals:
-                finals.append(newSubState)
-        SubGroups[index] = SubState(newSubState)
+                if newSubState not in finals:
+                    finals.append(newSubState)
+        SubGroups[index] = newSubState
 
     transitions:dict = {}
 
@@ -106,7 +103,12 @@ def min_AFD(afd_max:AFD) -> AFD:
         for a in symbols:
             key = (G, a)
             q = G.states[0]
-            destino = afd.transitions[(q, a)]
+            destino = afd.move(q, a)
+            if destino is None: continue
+            for subG in SubGroups:
+                if destino in subG.states:
+                    destino = subG
+                    break
             transitions[key] = destino
 
     return enumStates(

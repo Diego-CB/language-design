@@ -37,7 +37,7 @@ class Automata(ABC):
         return self.transitions[tran]
 
     @abstractmethod
-    def drawAutomata(self, filename) -> None: pass
+    def drawAutomata(self) -> None: pass
 
     def __repr__(self) -> str:
         return f'''
