@@ -39,6 +39,9 @@ class Automata(ABC):
     @abstractmethod
     def drawAutomata(self) -> None: pass
 
+    @abstractmethod
+    def simulate(self, c:str) -> bool: pass
+
     def __repr__(self) -> str:
         return f'''
         Estados: {self.estados}
@@ -56,6 +59,9 @@ class AFN(Automata):
         - initial (int): Estado inicial del automata
         - transitions (dict): transiciones del automata
         - final (int): estado de aceptacion del automata
+
+    Metodos:
+        - 
     '''
     def __init__(self,
         estados:list,
@@ -87,6 +93,23 @@ class AFN(Automata):
         subState = list(set(subState))
         subState.sort()
         return subState
+    
+    def simulate(self, c:str) -> bool:
+        S:list = self.e_closure(self.initial)
+
+        for char in c:
+            next_states = []
+
+            for estate in S:
+                reached_states = self.move(estate, char)
+
+                for q in reached_states:
+                    next_states = next_states + self.e_closure(q)
+
+            S = next_states
+
+        return (self.final in S)
+
     
     def drawAutomata(self):
         # create a new graph
@@ -144,6 +167,16 @@ class AFD(Automata):
         self.symbols:list = symbols
         self.initial:int = initial
         self.transitions:dict = transitions
+
+    def simulate(self, c:str) -> bool:
+        S:int = self.initial
+
+        for char in c:
+            next_state = self.move(S, char)
+            if next_state is None: return False
+            S = next_state
+
+        return (S in self.finals)
 
     def drawAutomata(self, min=False):
         # create a new graph

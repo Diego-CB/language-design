@@ -22,13 +22,18 @@ if __name__ == '__main__':
         opcion = input(menuString)
         if opcion == '.': continue
 
-        if opcion in menu.keys():
-            actions = menu[opcion]
-            print('\n----', actions[1], '----\n')
-            r = input('Ingrese una regex o (-) para salir\n-> ')
-            actions[0](r)
-        else:
+        if opcion not in menu.keys():
             print('Error: Ingrese una opcion valida')
+            continue
+
+        actions = menu[opcion]
+        print('\n----', actions[1], '----\n')
+        r = input('Ingrese una regex o (-) para salir\n-> ')
+        AF = actions[0](r)
+        c = input('Ingrese una cadena para simular el Automata generado\n-> ')
+        result = f'La cadena {c} fue aceptada\n' if AF.simulate(c) else f'La cadena {c} no fue aceptada\n'
+        print(result)
+
     
     print('-> Finalizando Ejecucion\n')
 
