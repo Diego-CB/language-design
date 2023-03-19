@@ -145,7 +145,7 @@ class AFD(Automata):
         self.initial:int = initial
         self.transitions:dict = transitions
 
-    def drawAutomata(self):
+    def drawAutomata(self, min=False):
         # create a new graph
         graph = graphviz.Digraph()
 
@@ -168,7 +168,7 @@ class AFD(Automata):
             graph.edge(start, f'q{finish}', label=symbol)
 
         # render the graph
-        path = './Renders/AFD'
+        path = './Renders/Min_AFD' if min else './Renders/AFD'
         graph.render(filename=path, format='png')
         os.remove(path)
 

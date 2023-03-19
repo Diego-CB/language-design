@@ -29,3 +29,17 @@ def createAFD(r:str) -> None:
     afd = directCons(r_tree)
     afd.drawAutomata()
 
+def minimizeAFD(r:str) -> None:
+    ''' Crea un AFD apor construccion directa '''
+    r_ = toPostfix(r)
+    r_tree = SyntaxTree(r_)
+    r_tree.showTree()
+
+    afn = createAFN_thompson(r_tree)
+    afn.drawAutomata()
+
+    afd = subconjuntos(afn)
+    afd.drawAutomata()
+    
+    min_afd = min_AFD(afd)
+    min_afd.drawAutomata(min=True)

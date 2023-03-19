@@ -4,7 +4,8 @@ if __name__ == '__main__':
     menu:dict = {
         '1': [createAFN, 'Creacion de AFN'],
         '2': [AFN_to_AFD, 'Creacion de AFD por Construccion de subconuntos'],
-        '3': [createAFD, 'Creacion de AFD por Construccion Directa']
+        '3': [createAFD, 'Creacion de AFD por Construccion Directa'],
+        '4': [minimizeAFD, 'AFN -> AFD por subconjuntos -> Minimizacion']
     }
 
     menuString = '\
@@ -12,6 +13,7 @@ if __name__ == '__main__':
         1 - Creacion de AFN\n\
         2 - AFD por Subconjuntos\n\
         3 - AFD por Construccion Directa\n\
+        4 - AFN -> AFD por subconjuntos -> Minimizacion\n\
         . - salir\n\
     -> \
     '
