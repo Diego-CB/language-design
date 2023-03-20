@@ -41,7 +41,7 @@
 - Si selecciona: Crear un AFN:
   1. Ingrese una regex valida
   2. Se generaran varios archivos dentro de la carpeta **`Renders`** con las representaciones graficas de los Automatas generados.
-    > path de la imagen: `./Renders/Automatas.png`
+    > path de la imagen: `./Renders/<<Automatas>>.png`
   3. Ingrese una cadena para simular en los automatas.
   4. Se indicara si la cadena fue aceptada por los distintos automatas.
 
