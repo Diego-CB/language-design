@@ -1,4 +1,4 @@
-# Lab A: Construccion de Thomson
+# Lab B: Varios Algoritmos de Automatas
 
 ## 📡 Tecnologias Utilizadas
 - Python 🐍: Modern syntax, Interpreted Languaje
@@ -6,11 +6,12 @@
 
 ## ✅ Rúbrica:
 
-  - [x] Validación de errores para expresión regular y balanceo de 𝑟
-  - [x] Conversión de de infix a postfix para producción de 𝑟' en postfix
-  - [x] Implementación del algoritmo de Construcción de Thompson con base en 𝑟'    
-  - [x] Mostrar en pantalla el listado solicitado de descripciones sobre los AFN generados
-  - [x] Ejercicios Pre-Laboratorio
+  - [x] Implementación del algoritmo de Construcción de Subconjuntos para transformar los AFN generados a AFD, con su implementación de funciones necesarias para cerraduras y similares.
+  - [x] Implementación del algoritmo de Construcción directa de AFD (DFA) para construir a partir de r.
+  - [x] Implementación del algoritmo de Minimización de AFD (DFA) para minimizar los AFD generados en los incisos anteriores.
+  - [x] Implementación de la simulación de un AFN para determinar si .𝑤 ∈ 𝐿(𝑟).
+  - [x] Implementación de la simulación de un AFD para determinar si .𝑤 ∈ 𝐿(𝑟).
+  - [x] Ejercicios de pre laboratorio.
 
 ## 🗃️ Estructura de Archivos
 
@@ -18,15 +19,19 @@
 
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
-  - `Tree.py`: Implementación de arbol de sintaxis para regex.
-  - `util.py`: funcinones auxiliares
-  - `Automata.py`: Objectos Automatas
-  - `DrawAutomata.py`: Implementación de representacion visual de automatas
-  - `Thompson.py`: Implementación de algoritmo de Thompson para construccion de AFN's.
 
-- **`Renders`**: Dentro de esta carpeta se encuentran las imagenes resultantes de los AFN y arboles
+  - **`Lexer`**
+    - `util.py`: funcinones auxiliares
+    - `Tree.py`: Implementación de arbol de sintaxis y followpos.
+    - `Automata.py`: Objectos Automatas y funcionalidades de los mismos
+    - `Thompson.py`: Implementación de algoritmo de Thompson para construccion de AFN's.
+    - `Subconjuntos.py`: Implementación de algoritmo de construccion de subconjuntos.
+    - `DirectCons.py`: Implementación de algoritmo de construccion directa de AFD.
+    - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
 
-- `drivers.py`: implemetaciones de flujos. (por ejemplo creacion de AFN)
+- **`Renders`**: Dentro de esta carpeta se encuentran las imagenes resultantes de los AF y el arbol de syntaxis
+
+- `drivers.py`: implemetaciones de pipelines (API)
 - `main.py`: Programa principal (Driver Program).
 
 ## 🕹️ Getting Started
@@ -35,9 +40,10 @@
 
 - Si selecciona: Crear un AFN:
   1. Ingrese una regex valida
-  2. Se abrirán 2 pantallas. Una con el arbol sintáctico y la regex en postfix y otra con el AFN generado.
-  3. Se escribiran 2 archivos `AFN_(regex).png` y `Tree_(regex).png` con la imagen resultante en la  carpeta **`Renders`**. Si existen errores en la regex de entrada se desplegara un error con la descripcion.
-    > path de la imagen: `./Renders/AFN_(regex).png` y `./Renders/Tree_(regex).png`
+  2. Se generaran varios archivos dentro de la carpeta **`Renders`** con las representaciones graficas de los Automatas generados.
+    > path de la imagen: `./Renders/<<Automatas>>.png`
+  3. Ingrese una cadena para simular en los automatas.
+  4. Se indicara si la cadena fue aceptada por los distintos automatas.
 
 ## 🤓 Autor
 

@@ -1,18 +1,35 @@
 from drivers import *
 
 if __name__ == '__main__':
-    print('------ Creacion de AFN ------')
     r = None
+    while r != '.':
+        r = input('Ingrese una regex o (.) para salir\n-> ')
+        if r == '.': continue
 
-    while r != '-':
-        r = input('Ingrese una regex o (-) para salir\n-> ')
+        afn = createAFN(r)
+        AFD_sub = AFN_to_AFD(afn)
+        AFD_dir = createAFD(r)
+        AFD_min_sub = minimizeAFD(AFD_sub, dir=False)
+        AFD_min_dir = minimizeAFD(AFD_dir, dir=True)
 
-        if r == '-':
-            print('-> Finalizando Ejecucion\n')
-            continue
+        Automatas:list = [
+            ['AFN', afn],
+            ['AFD por Subconjuntos', AFD_sub],
+            ['AFD Directo', AFD_dir],
+            ['AFD por Subconjuntos Minimizado', AFD_min_sub],
+            ['AFD Directo Minimizado', AFD_min_dir],
+        ]
+        print('Creacion de automatas exitosa')
 
-        createAFN(r)
-    
+        w = input('Ingrese una cadena (w) para simulacion\n-> ')
+
+        for index, AF in enumerate(Automatas):
+            result = AF[1].simulate(w)
+            result = '' if result else ' no'
+            print(f'-> La cadena \'{w}\'{result} fue aceptada con {AF[0]}')
+
+    print('--- Finalizando Ejecucion ---\n')
+
     '''
     Ejempos de Regex
     ab * ab *

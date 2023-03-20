@@ -1,6 +1,6 @@
 from .Tree import SyntaxTree, Node
 from .Automata import AFN
-from .alfabeto import ALPHABET
+from ..alfabeto import ALPHABET
 
 class Thompson:
     '''Objecto interno para construccion de AFN por Thompson
@@ -19,7 +19,7 @@ class Thompson:
         self.STATE_NAME += 1
         return actualState
         
-    def _concat(self, right:AFN, left:AFN) -> AFN:
+    def _concat(self, left:AFN, right:AFN) -> AFN:
         '''Implementacion de concatenacion de AFN's '''
         # Estado inicial y final
         initial = left.initial
@@ -27,6 +27,7 @@ class Thompson:
 
         # Simbolos
         symbols = left.symbols + right.symbols
+        symbols = list(set(symbols))
 
         # Estados
         estados = left.estados + right.estados
@@ -99,6 +100,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = left.symbols + right.symbols
+                symbols = list(set(symbols))
 
                 # Estados
                 estados = [initial, final] + left.estados + right.estados
@@ -122,6 +124,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = left.symbols
+                symbols = list(set(symbols))
 
                 # Estados
                 estados = [initial, final] + left.estados
@@ -141,6 +144,7 @@ class Thompson:
 
                 # Simbolos
                 symbols = copy.symbols
+                symbols = list(set(symbols))
 
                 # Estados
                 estados = [initial, final] + copy.estados
