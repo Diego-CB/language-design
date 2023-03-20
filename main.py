@@ -1,41 +1,34 @@
 from drivers import *
 
 if __name__ == '__main__':
-    menu:dict = {
-        '1': [createAFN, 'Creacion de AFN'],
-        '2': [AFN_to_AFD, 'Creacion de AFD por Construccion de subconuntos'],
-        '3': [createAFD, 'Creacion de AFD por Construccion Directa'],
-        '4': [minimizeAFD, 'AFN -> AFD por subconjuntos -> Minimizacion']
-    }
+    r = None
+    while r != '.':
+        r = input('Ingrese una regex o (.) para salir\n-> ')
+        if r == '.': continue
 
-    menuString = '\
-    Opciones:\n\
-        1 - Creacion de AFN\n\
-        2 - AFD por Subconjuntos\n\
-        3 - AFD por Construccion Directa\n\
-        4 - AFN -> AFD por subconjuntos -> Minimizacion\n\
-        . - salir\n\
-    -> \
-    '
-    opcion = None
-    while opcion != '.':
-        opcion = input(menuString)
-        if opcion == '.': continue
+        afn = createAFN(r)
+        AFD_sub = AFN_to_AFD(afn)
+        AFD_dir = createAFD(r)
+        AFD_min_sub = minimizeAFD(AFD_sub, dir=False)
+        AFD_min_dir = minimizeAFD(AFD_dir, dir=True)
 
-        if opcion not in menu.keys():
-            print('Error: Ingrese una opcion valida')
-            continue
+        Automatas:list = [
+            ['AFN', afn],
+            ['AFD por Subconjuntos', AFD_sub],
+            ['AFD Directo', AFD_dir],
+            ['AFD por Subconjuntos Minimizado', AFD_min_sub],
+            ['AFD Directo Minimizado', AFD_min_dir],
+        ]
+        print('Creacion de automatas exitosa')
 
-        actions = menu[opcion]
-        print('\n----', actions[1], '----\n')
-        r = input('Ingrese una regex o (-) para salir\n-> ')
-        AF = actions[0](r)
-        c = input('Ingrese una cadena para simular el Automata generado\n-> ')
-        result = f'La cadena {c} fue aceptada\n' if AF.simulate(c) else f'La cadena {c} no fue aceptada\n'
-        print(result)
+        w = input('Ingrese una cadena (w) para simulacion\n-> ')
 
-    
-    print('-> Finalizando Ejecucion\n')
+        for index, AF in enumerate(Automatas):
+            result = AF[1].simulate(w)
+            result = '' if result else ' no'
+            print(f'-> La cadena \'{w}\'{result} fue aceptada con {AF[0]}')
+
+    print('--- Finalizando Ejecucion ---\n')
 
     '''
     Ejempos de Regex
