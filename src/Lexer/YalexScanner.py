@@ -4,10 +4,7 @@ import sys
 class RegularDef:
     def __init__(self, name: str, definition: str) -> None:
         self.name: str = name
-        self.definition: str = self._process_regex(definition)
-
-    def _process_regex(regex: str) -> str:
-        return regex
+        self.definition: str = definition
 
     def __repr__(self) -> str:
         return f'{self.name} : {self.definition}'
@@ -29,6 +26,10 @@ class YalexReader:
                 info = line[3:]
                 new_def = self._getDefinition(info)
                 self.regexDefs.append(new_def)
+                self._process_regex(new_def)
+
+    def _process_regex(self, regex: RegularDef) -> None:
+        pass
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
@@ -41,11 +42,12 @@ class YalexReader:
             lookAhead = line[0] if len(line) > 0 else ''
 
             if actual == ' ' and lookAhead == '=':
+                name_readed = True
                 line.pop(0)
+
                 if line[0] == ' ':
                     line.pop(0)
 
-                name_readed = True
                 continue
 
             if name_readed:
@@ -63,13 +65,3 @@ class YalexReader:
             string += regex.__repr__()
 
         return string
-
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        raise Exception('Input Yalex File Missing')
-
-    # Read Input File
-    filepath = sys.argv[1]
-    reader: YalexReader = YalexReader(filename=filepath)
-    print(reader)
