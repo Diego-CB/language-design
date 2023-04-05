@@ -1,10 +1,10 @@
-import sys
+from copy import copy as cp
 
 
 class RegularDef:
     def __init__(self, name: str, definition: str) -> None:
         self.name: str = name
-        self.definition: str = definition
+        self.regex: str = definition
 
     def __repr__(self) -> str:
         return f'{self.name} : {self.definition}'
@@ -28,8 +28,17 @@ class YalexReader:
                 self.regexDefs.append(new_def)
                 self._process_regex(new_def)
 
-    def _process_regex(self, regex: RegularDef) -> None:
-        pass
+    def _process_regex(self, definition: RegularDef) -> None:
+        regex = list(cp(definition.regex))
+
+        if regex[0] == '[':
+            if regex[-1] != ']':
+                def_string = definition.__repr__()
+                print(f'Error Lexico: Expresion invalida "{def_string}"')
+                return
+
+            definition.regex = self._raw_exp(regex[1:-1])
+            return
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
@@ -57,6 +66,10 @@ class YalexReader:
                 new_name += actual
 
         return RegularDef(new_name, new_def)
+
+    def _raw_exp(self, regex: str) -> str:
+
+        return regex
 
     def __repr__(self) -> str:
         string = ''
