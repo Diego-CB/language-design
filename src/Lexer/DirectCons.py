@@ -14,7 +14,8 @@ Autor: Diego Cordova - 20212
 from .util import *
 from .Tree import SyntaxTree
 
-def _getU(S:SubState, a:str):
+
+def _getU(S: SubState, a: str):
     map = tree.symbolMap
     U = []
 
@@ -26,12 +27,13 @@ def _getU(S:SubState, a:str):
     U.sort()
     return U
 
-def directCons(Stree:SyntaxTree) -> AFD:
+
+def directCons(Stree: SyntaxTree) -> AFD:
     # Asignar tree a variable global
     global tree
     tree = Stree
 
-    # Asignar followpos 
+    # Asignar followpos
     global followpos
     followpos = tree.get_followpos()
 
@@ -44,14 +46,15 @@ def directCons(Stree:SyntaxTree) -> AFD:
     transitions = {}
     finals = []
     symbols = tree.symbols
-    S:SubState = get_unmarked(Dstates)
+    S: SubState = get_unmarked(Dstates)
 
     while S != False:
         S.marked = True
 
         for a in symbols:
             U = _getU(S, a)
-            if len(U) == 0: continue
+            if len(U) == 0:
+                continue
 
             if U not in states:
                 states.append(U)

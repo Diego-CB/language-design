@@ -14,21 +14,22 @@ Autor: Diego Cordova - 20212
 from .alfabeto import ALPHABET, OPERATORS
 
 _ORDER = {
-  '*': 3,
-  '+': 3,
-  '?': 3,
-  '.': 2,
-  '|': 1,
-  '(': 0,
+    '*': 3,
+    '+': 3,
+    '?': 3,
+    '.': 2,
+    '|': 1,
+    '(': 0,
 }
 
-def _shunting(regex:list) -> list:
+
+def _shunting(regex: list) -> list:
     '''
     Implementacion del algoritmo Shunting Yard adaptado a regex
     Referencia: https://www.cs.buap.mx/~andrex/estructuras/AlgoritmoPolacasPosfijo.pdf
     '''
-    out:list = [] # Stack de salida
-    stack:list = [] # Stack de stack de operadores
+    out: list = []  # Stack de salida
+    stack: list = []  # Stack de stack de operadores
 
     while len(regex) > 0:
         char = regex.pop(0)
@@ -57,7 +58,7 @@ def _shunting(regex:list) -> list:
                     break
 
             stack.append(char)
-    
+
         else:
             raise Exception(f'\nSimbol not valid for regex: {char}\n')
 
@@ -67,7 +68,8 @@ def _shunting(regex:list) -> list:
 
     return out
 
-def _checkParen(regex:list) -> None:
+
+def _checkParen(regex: list) -> None:
     '''Verifica si faltan parentesis en la regex'''
     open_count = regex.count('(')
     close_count = regex.count(')')
@@ -75,14 +77,15 @@ def _checkParen(regex:list) -> None:
         missing = '(' if open_count < close_count else ')'
         raise Exception(f'\n"{missing}" missing\n')
 
-def _preprocess(regex:list) -> list:
+
+def _preprocess(regex: list) -> list:
     '''Agrega puntos de concatenacion a una regex en infix'''
     out = []
 
     while len(regex) > 0:
         actual = regex.pop(0)
         last = '' if len(out) == 0 else out[-1]
-        
+
         if (
             (
                 actual == '('
@@ -98,7 +101,8 @@ def _preprocess(regex:list) -> list:
 
     return out
 
-def _postProcess(regex:list) -> list:
+
+def _postProcess(regex: list) -> list:
     out = []
 
     while len(regex) > 0:
@@ -113,7 +117,8 @@ def _postProcess(regex:list) -> list:
 
     return out
 
-def toPostfix(regex:str, augmented=False) -> list:
+
+def toPostfix(regex: str, augmented=False) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
     regex = regex.replace(' ', '')
     regex = list(regex)

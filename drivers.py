@@ -1,6 +1,7 @@
 from src import *
 
-def createAFN(r:str) -> AFN:
+
+def createAFN(r: str) -> AFN:
     ''' Crea un AFN a partir de una regex '''
     r_ = toPostfix(r)
     r_tree = SyntaxTree(r_)
@@ -9,13 +10,15 @@ def createAFN(r:str) -> AFN:
     afn.drawAutomata()
     return afn
 
-def AFN_to_AFD(afn:AFN) -> AFD:
+
+def AFN_to_AFD(afn: AFN) -> AFD:
     ''' Crea un AFD por construccion de subconjuntos '''
     afd = subconjuntos(afn)
     afd.drawAutomata('AFD_SUB')
     return afd
 
-def createAFD(r:str) -> AFD:
+
+def createAFD(r: str) -> AFD:
     ''' Crea un AFD apor construccion directa '''
     r_ = toPostfix(r, augmented=True)
     r_tree = SyntaxTree(r_)
@@ -25,7 +28,8 @@ def createAFD(r:str) -> AFD:
     afd.drawAutomata('AFD_Directo')
     return afd
 
-def minimizeAFD(afd:AFD, dir:bool) -> AFD:
+
+def minimizeAFD(afd: AFD, dir: bool) -> AFD:
     ''' Crea un AFD apor construccion directa '''
     min_afd = min_AFD(afd)
     filename = 'AFD_Directo_MIN' if dir else 'AFD_SUB_MIN'

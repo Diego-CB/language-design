@@ -4,7 +4,8 @@ if __name__ == '__main__':
     r = None
     while r != '.':
         r = input('Ingrese una regex o (.) para salir\n-> ')
-        if r == '.': continue
+        if r == '.':
+            continue
 
         afn = createAFN(r)
         AFD_sub = AFN_to_AFD(afn)
@@ -12,7 +13,7 @@ if __name__ == '__main__':
         AFD_min_sub = minimizeAFD(AFD_sub, dir=False)
         AFD_min_dir = minimizeAFD(AFD_dir, dir=True)
 
-        Automatas:list = [
+        Automatas: list = [
             ['AFN', afn],
             ['AFD por Subconjuntos', AFD_sub],
             ['AFD Directo', AFD_dir],
