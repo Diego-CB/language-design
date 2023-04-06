@@ -17,6 +17,7 @@ class RegularDef:
 
 
 class YalexReader:
+    # TODO: Comments on YalexReader file
     def __init__(self, filename: str) -> None:
         # File Reading
         file = open(filename)
@@ -34,6 +35,8 @@ class YalexReader:
                 self.ogDefs.append(new_def.__repr__())
                 self._process_regex(new_def)
                 self.regexDefs.append(new_def)
+
+            # TODO: Rules processing
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
