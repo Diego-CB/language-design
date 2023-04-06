@@ -17,6 +17,7 @@
 
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
+  - `drivers.py`: implemetaciones de pipelines (API)
 
   - **`Lexer`**
     - `util.py`: funcinones auxiliares
@@ -32,7 +33,6 @@
 
 - **`Examples`**: Dentro de esta carpeta se encuentran ejemplos de archivos yalex.
 
-- `drivers.py`: implemetaciones de pipelines (API)
 - `main.py`: Programa principal (Driver Program).
 
 ## 🕹️ Getting Started

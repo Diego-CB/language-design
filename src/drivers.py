@@ -1,4 +1,5 @@
-from src import *
+from .Lexer import *
+from .postfix import toPostfix
 
 
 def createAFN(r: str) -> AFN:
