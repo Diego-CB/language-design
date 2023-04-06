@@ -96,6 +96,7 @@ class YalexReader:
 
     def _recursive_expresion(self, regex: list) -> str:
         # return ''.join(regex)
+        og_regex = cp(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
         def_map = {regex.name: regex.regex for regex in definitions}
@@ -105,6 +106,7 @@ class YalexReader:
         while len(regex) > 0:
             actual = regex.pop(0)
 
+            # Referencias a definiciones pasadas
             if actual in starters:
                 posible_defs = []
 
@@ -114,6 +116,7 @@ class YalexReader:
 
                 char_count = 1
                 founded_def = None
+                backTrace = actual
 
                 while len(posible_defs) > 0:
                     actual = regex.pop(0)
@@ -131,8 +134,42 @@ class YalexReader:
                         posible_defs.remove(def_)
 
                     char_count += 1
+                    backTrace += actual
 
-                out_regex += def_map[founded_def]
+                if founded_def is not None:
+                    out_regex += def_map[founded_def]
+                else:
+                    out_regex += backTrace
+
+                continue
+
+            # Caracteres Nuevos
+            if actual in ['"', "'"]:
+                raw_exp = [actual]
+                actual = ''
+
+                while actual not in ['"', "'"]:
+                    actual = regex.pop(0)
+                    raw_exp.append(actual)
+
+                out_regex += self._raw_exp(raw_exp)
+                continue
+
+            # Secuencias de Caracteres Nuevos
+            if actual == '[':
+                raw_exp = []
+
+                while actual != ']':
+                    if len(regex) < 0:
+                        print(f'(Error Lexico) Expresion invalida: {og_regex}')
+                        return og_regex
+
+                    actual = regex.pop(0)
+
+                    if actual != ']':
+                        raw_exp.append(actual)
+
+                out_regex += self._raw_exp(raw_exp)
                 continue
 
             out_regex += actual
@@ -169,7 +206,7 @@ class YalexReader:
 
                 expresions.append(new_exp)
 
-            if actual == '-':
+            if actual == '-' and not reading_exp:
                 secuence_start = expresions[-1]
 
             if secuence_start is not None and secuence_end is not None:
