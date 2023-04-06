@@ -31,15 +31,18 @@ class YalexReader:
             if line.split(' ')[0] == 'let':
                 info = line[3:-1]
                 new_def = self._getDefinition(info)
-                self.regexDefs.append(new_def)
                 self.ogDefs.append(new_def.__repr__())
                 self._process_regex(new_def)
+                self.regexDefs.append(new_def)
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
         new_name = ''
         new_def = ''
         name_readed = False
+
+        while line[0] == ' ':
+            line.pop(0)
 
         while len(line) > 0:
             actual = line.pop(0)
@@ -53,7 +56,7 @@ class YalexReader:
                     if line[0] == ' ':
                         line.pop(0)
 
-                continue
+                    continue
 
             if name_readed:
                 new_def += actual
@@ -92,6 +95,7 @@ class YalexReader:
         definition.regex = self._recursive_expresion(regex)
 
     def _recursive_expresion(self, regex: list) -> str:
+        # return ''.join(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
         def_map = {regex.name: regex.regex for regex in definitions}
@@ -109,39 +113,31 @@ class YalexReader:
                         posible_defs.append(regex_names[index])
 
                 char_count = 1
-                temp_name = actual
-                founded_def = False
-                actual_def = None
-                founded = None
+                founded_def = None
 
-                while not founded_def:
+                while len(posible_defs) > 0:
                     actual = regex.pop(0)
-                    lookAhead = regex[0] if len(regex) > 0 else None
                     not_defs = []
 
                     for def_ in posible_defs:
-                        if lookAhead in OP and actual == def_[char_count]:
-                            founded = def_
-
                         if actual != def_[char_count]:
                             not_defs.append(def_)
 
-                        if len(def_) - 1 == char_count:
+                        if actual == def_[char_count] and len(def_) == char_count + 1:
+                            founded_def = def_
                             not_defs.append(def_)
-                            continue
-
-                        if len(def_) == char_count:
-                            not_defs.append(def_)
-                            continue
 
                     for def_ in not_defs:
                         posible_defs.remove(def_)
 
                     char_count += 1
 
+                out_regex += def_map[founded_def]
+                continue
+
             out_regex += actual
 
-        return regex
+        return out_regex
 
     def _raw_exp(self, regex: list) -> str:
         expresions: list = []
@@ -153,13 +149,13 @@ class YalexReader:
             actual = regex.pop(0)
             lookAhead = regex[0] if len(regex) > 0 else None
 
-            if actual == "'":
+            if actual in ["'", '"']:
                 reading_exp = not reading_exp
                 if not reading_exp and secuence_start is not None:
                     secuence_end = expresions[-1]
 
             if reading_exp:
-                if actual == "'":
+                if actual in ["'", '"']:
                     continue
 
                 new_exp = actual
