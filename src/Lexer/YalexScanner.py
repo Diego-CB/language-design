@@ -1,10 +1,4 @@
 from copy import copy as cp
-from ..alfabeto import OPERATORS
-
-OP = OPERATORS
-OP.remove('.')
-OP.append('(')
-OP.append(')')
 
 
 class RegularDef:
