@@ -129,7 +129,7 @@ class SyntaxTree:
 
         if right[0] in OPERATORS:
             lastOp = [0]
-            params = 2 if right[0] in ['|', '.'] else 1
+            params = 2 if right[0] in ['|', '\\'] else 1
 
             while params > 0:
                 if len(postfix) == 0:
@@ -140,7 +140,7 @@ class SyntaxTree:
 
                 if tempChar in OPERATORS:
                     lastOp = tempChar
-                    params += 2 if tempChar in ['|', '.'] else 1
+                    params += 2 if tempChar in ['|', '\\'] else 1
 
                 right.insert(0, tempChar)
 
@@ -154,19 +154,28 @@ class SyntaxTree:
     # Dibujo de grafo
     def _getNodes(self, actualNode: Node) -> None:
         '''Guarda la informacion para impresion de arbol'''
-        actual = actualNode.data + str(actualNode.printId)
+        shape = 'plaintext'
+        if actualNode.data in OPERATORS:
+            shape = 'circle'
+
+        if actualNode == self.root:
+            shape = 'doublecircle'
+
+        actual = (
+            str(actualNode.printId),
+            '.' if actualNode.data == '\\' else actualNode.data,
+            shape
+        )
         self.nodes.append(actual)
 
         if actualNode.right is not None:
             right: Node = actualNode.right
-            right_data = right.data + str(right.printId)
-            self.edges.append((actual, right_data))
+            self.edges.append((actual[0], str(right.printId)))
             self._getNodes(right)
 
         if actualNode.left is not None:
             left: Node = actualNode.left
-            left_data = left.data + str(left.printId)
-            self.edges.append((actual, left_data))
+            self.edges.append((actual[0], str(left.printId)))
             self._getNodes(left)
 
     def showTree(self) -> None:
@@ -182,13 +191,13 @@ class SyntaxTree:
         G = graphviz.Digraph()
 
         for node in self.nodes:
-            G.node(node, shape='circle')
+            G.node(node[0], node[1], shape=node[2])
 
         for edge in self.edges:
             G.edge(*edge)
 
         # render del arbol
-        path = './Renders/Tree'
+        path = './out/Tree'
         G.render(filename=path, format='png')
         os.remove(path)
 
@@ -203,7 +212,7 @@ class SyntaxTree:
             case'|':
                 return self._nullable(n.right) or self._nullable(n.left)
 
-            case '.':
+            case '\\':
                 return self._nullable(n.right) and self._nullable(n.left)
 
             case '*':
@@ -229,7 +238,7 @@ class SyntaxTree:
             ''' Si es epsilon se devuelve array vacio '''
             return []
 
-        elif root == '.':
+        elif root == '\\':
             '''
             En caso el hijo izquierdo sea nullable:
             - Se devuelve la union de firstpos de los dos hijos de la raiz
@@ -263,7 +272,7 @@ class SyntaxTree:
             ''' Si es epsilon se devuelve un array vacio '''
             return []
 
-        elif root == '.':
+        elif root == '\\':
             '''
             En caso el hijo derecho sea nullable:
             - Se devuelve la union de lastpos de los dos hijos de la raiz
@@ -298,7 +307,7 @@ class SyntaxTree:
         '''
         root = n.data
 
-        if root == '.':
+        if root == '\\':
             ''' 
             Se agrega el firspos del nodo derecho al izquierdo
             en caso sea concatenacion
@@ -346,7 +355,7 @@ class SyntaxTree:
             n = self.root
             self._followpos(n=self.root)
 
-        if n.data in ['|', '.']:
+        if n.data in ['|', '\\']:
             left = self.get_followpos(n.left)
             right = self.get_followpos(n.right)
             follow_pos.update(left)
