@@ -38,19 +38,22 @@ def minimizeAFD(afd: AFD, dir: bool) -> AFD:
     return afd
 
 
-def ReadYalex(filepath: str) -> str:
+def ReadYalex(filepath: str) -> None:
     ''' Crea un AFD apor construccion directa '''
+    # Lectura y procesamiento de Yalex
     reader: YalexReader = YalexReader(filename=filepath)
     regex = reader.unifiedRegex
     alphabet = reader.alphabet
+    # Conversion a POstfix
     regex_ = toPostfix(regex, alphabet=alphabet)
-    print_regex = ''.join(regex_)
-    print_regex = print_regex.replace('.', "'.'")
-    print_regex = print_regex.replace('\\', '.')
 
-    f = open('./out/PostfixRegex.txt', 'w')
+    # Impresion de postfix en archivo 'steps.txt'
+    print_regex = transformPostfix(regex_)
+    print_regex = '\n---- Postfix Regex ----\n' + print_regex
+    f = open('./out/steps.txt', 'a')
     f.write(print_regex)
     f.close()
+
+    # Creacion e impresion de arbol de expresion
     r_tree = SyntaxTree(regex_)
     r_tree.showTree()
-    return regex_

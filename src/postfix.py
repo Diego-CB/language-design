@@ -17,7 +17,7 @@ _ORDER = {
     '*': 3,
     '+': 3,
     '?': 3,
-    '\\': 2,
+    '.': 2,
     '|': 1,
     '(': 0,
 }
@@ -35,10 +35,7 @@ def _shunting(regex: list, alphabet: list) -> list:
         char = regex.pop(0)
 
         if char in alphabet:
-            out_char = char
-            out_char = '(' if char == '[' else char
-            out_char = ')' if char == ']' else char
-            out.append(out_char)
+            out.append(char)
 
         elif char == '(':
             stack.append(char)
@@ -98,7 +95,7 @@ def _preprocess(regex: list, alphabet: list) -> list:
                 or last in alphabet
             )
         ):
-            out.append('\\')
+            out.append('.')
 
         out.append(actual)
 
@@ -121,10 +118,10 @@ def _postProcess(regex: list) -> list:
     return out
 
 
-def toPostfix(regex: str, augmented=False, alphabet=ALPHABET) -> list:
+def toPostfix(regex: str | list, augmented=False, alphabet=ALPHABET) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
-    regex = list(regex)
+    regex = list(regex) if type(regex) == str else regex
     _checkParen(regex)
-    regex = regex if '\\' in regex else _preprocess(regex, alphabet)
-    regex = _shunting(regex, alphabet) + (['#', '\\'] if augmented else [])
+    regex = regex if '.' in regex else _preprocess(regex, alphabet)
+    regex = _shunting(regex, alphabet) + (['#', '.'] if augmented else [])
     return _postProcess(regex)

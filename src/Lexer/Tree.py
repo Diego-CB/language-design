@@ -83,7 +83,7 @@ class SyntaxTree:
         self.root = Node()
         self.symbols: list = []
         self.symbolMap: dict = {}
-        self.regex = ''.join(postfix)
+        # self.regex = ''.join(postfix)
         self._fillTree(self.root, postfix)
         self.reset_pid()
 
@@ -129,7 +129,7 @@ class SyntaxTree:
 
         if right[0] in OPERATORS:
             lastOp = [0]
-            params = 2 if right[0] in ['|', '\\'] else 1
+            params = 2 if right[0] in ['|', '.'] else 1
 
             while params > 0:
                 if len(postfix) == 0:
@@ -140,7 +140,7 @@ class SyntaxTree:
 
                 if tempChar in OPERATORS:
                     lastOp = tempChar
-                    params += 2 if tempChar in ['|', '\\'] else 1
+                    params += 2 if tempChar in ['|', '.'] else 1
 
                 right.insert(0, tempChar)
 
@@ -161,9 +161,22 @@ class SyntaxTree:
         if actualNode == self.root:
             shape = 'doublecircle'
 
+        label = chr(actualNode.data) \
+            if type(actualNode.data) == int \
+            else actualNode.data
+
+        if label == '\n':
+            label = '/n'
+
+        elif label == '\t':
+            label = '/t'
+
+        elif label == ' ':
+            label = "' '"
+
         actual = (
             str(actualNode.printId),
-            '.' if actualNode.data == '\\' else actualNode.data,
+            label,
             shape
         )
         self.nodes.append(actual)
@@ -212,7 +225,7 @@ class SyntaxTree:
             case'|':
                 return self._nullable(n.right) or self._nullable(n.left)
 
-            case '\\':
+            case '.':
                 return self._nullable(n.right) and self._nullable(n.left)
 
             case '*':
@@ -238,7 +251,7 @@ class SyntaxTree:
             ''' Si es epsilon se devuelve array vacio '''
             return []
 
-        elif root == '\\':
+        elif root == '.':
             '''
             En caso el hijo izquierdo sea nullable:
             - Se devuelve la union de firstpos de los dos hijos de la raiz
@@ -272,7 +285,7 @@ class SyntaxTree:
             ''' Si es epsilon se devuelve un array vacio '''
             return []
 
-        elif root == '\\':
+        elif root == '.':
             '''
             En caso el hijo derecho sea nullable:
             - Se devuelve la union de lastpos de los dos hijos de la raiz
@@ -307,7 +320,7 @@ class SyntaxTree:
         '''
         root = n.data
 
-        if root == '\\':
+        if root == '.':
             ''' 
             Se agrega el firspos del nodo derecho al izquierdo
             en caso sea concatenacion
@@ -355,7 +368,7 @@ class SyntaxTree:
             n = self.root
             self._followpos(n=self.root)
 
-        if n.data in ['|', '\\']:
+        if n.data in ['|', '.']:
             left = self.get_followpos(n.left)
             right = self.get_followpos(n.right)
             follow_pos.update(left)

@@ -91,3 +91,29 @@ def enumStates(
         finals=actual_finals,
         transitions=actual_trans
     )
+
+
+OPERATORS = ['.', '|', '*', '?', '+', '(', ')']
+
+
+def transformPostfix(postfix: list[str | int]) -> str:
+    new_postfix = ''
+
+    for char in postfix:
+        if type(char) == int:
+            char = chr(char)
+            if char in OPERATORS:
+                char = "'" + char + "'"
+
+            if char == '\n':
+                char = '\\n'
+
+            elif char == '\t':
+                char = '\\t'
+
+            elif char == ' ':
+                char = "' '"
+
+        new_postfix += char
+
+    return new_postfix

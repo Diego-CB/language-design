@@ -19,4 +19,4 @@ epsilon = '^'
 delims = ['\n', '\t', ' ']
 
 ALPHABET = lower + upper + digits + delims + [epsilon, '[', ']', '.']
-OPERATORS = ['\\', '|', '*', '?', '+']
+OPERATORS = ['.', '|', '*', '?', '+']

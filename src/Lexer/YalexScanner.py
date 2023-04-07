@@ -4,9 +4,9 @@ RESERVED = ['|', '*', '?', '+', '(', ')']
 
 
 class RegularDef:
-    def __init__(self, name: str, definition: str) -> None:
-        self.name: str = name
-        self.regex: str = definition
+    def __init__(self, name: list, definition: list) -> None:
+        self.name: list = name
+        self.regex: list = definition
 
     def __repr__(self) -> str:
         return f'{self.name} = {self.regex}'
@@ -14,8 +14,8 @@ class RegularDef:
 
 class Token:
     def __init__(self) -> None:
-        self.rule: str = ''
-        self.token: str = ''
+        self.rule: list = ''
+        self.token: list = ''
 
     def __repr__(self) -> str:
         return f'{self.token} = {self.rule}'
@@ -73,7 +73,11 @@ class YalexReader:
         self.printFile()
 
     def _getFinalRegex(self) -> str:
-        expresions = [token.rule for token in self.tokenRules]
+        expresions = []
+
+        for token in self.tokenRules:
+            expresions.append(token.rule)
+
         return self._toRegexOr(expresions)
 
     def _process_ruleTokens(self, rulesLines) -> None:
@@ -108,7 +112,7 @@ class YalexReader:
                 else:
                     rule.rule += actual
 
-    def _process_token(self, token: str) -> str:
+    def _process_token(self, token: list) -> str:
         token = token[1:] if token[0] == ' ' else token
         token = token[:-1] if token[-1] == ' ' else token
         return_stm, token_name = token.split(' ')
@@ -125,7 +129,7 @@ class YalexReader:
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
-        new_name = ''
+        new_name = []
         new_def = ''
         name_readed = False
 
@@ -150,7 +154,7 @@ class YalexReader:
                 new_def += actual
 
             else:
-                new_name += actual
+                new_name.append(ord(actual))
 
         return RegularDef(new_name, new_def)
 
@@ -185,12 +189,12 @@ class YalexReader:
         og_regex = cp(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
-        def_map = {regex.name: regex.regex for regex in definitions}
+        # TODO no se puede usar una lista como key de ditionary
         starters = [regex[0] for regex in regex_names]
-        out_regex = ''
+        out_regex = []
 
         while len(regex) > 0:
-            actual = regex.pop(0)
+            actual = ord(regex.pop(0))
 
             # Referencias a definiciones pasadas
             if actual in starters:
@@ -202,11 +206,11 @@ class YalexReader:
 
                 char_count = 1
                 founded_def = None
-                backTrace = actual
+                backTrace = [actual]
 
                 while len(posible_defs) > 0:
-                    actual = regex.pop(0)
-                    lookAhead = regex[0] if len(regex) > 0 else None
+                    actual = ord(regex.pop(0))
+                    lookAhead = ord(regex[0]) if len(regex) > 0 else None
                     not_defs = []
 
                     for def_ in posible_defs:
@@ -225,29 +229,32 @@ class YalexReader:
                             posible_defs.remove(def_)
 
                     char_count += 1
-                    backTrace += actual
+                    backTrace.append(actual)
 
                 if founded_def is not None:
-                    out_regex += def_map[founded_def]
+                    def_index = regex_names.index(founded_def)
+                    founded_regex = definitions[def_index].regex
+                    out_regex = out_regex + founded_regex
+
                 else:
-                    out_regex += backTrace
+                    out_regex = out_regex + backTrace
 
                 continue
 
             # Caracteres Nuevos
-            if actual in ['"', "'"]:
-                raw_exp = [actual]
+            if actual in [ord("'"), ord('"')]:
+                raw_exp = [chr(actual)]
                 actual = ''
 
-                while actual not in ['"', "'"]:
+                while actual not in ["'", '"']:
                     actual = regex.pop(0)
                     raw_exp.append(actual)
 
-                out_regex += self._raw_exp(raw_exp)
+                out_regex = out_regex + self._raw_exp(raw_exp)
                 continue
 
             # Secuencias de Caracteres Nuevos
-            if actual == '[':
+            if actual == ord('['):
                 raw_exp = []
 
                 while actual != ']':
@@ -260,15 +267,20 @@ class YalexReader:
                     if actual != ']':
                         raw_exp.append(actual)
 
-                out_regex += self._raw_exp(raw_exp)
+                out_regex = out_regex + self._raw_exp(raw_exp)
                 continue
 
             if (
-                actual not in RESERVED
+                chr(actual) not in RESERVED
                 and actual not in self.alphabet
             ):
                 self.alphabet.append(actual)
-            out_regex += actual
+
+            if chr(actual) not in RESERVED:
+                out_regex.append(actual)
+
+            else:
+                out_regex.append(chr(actual))
 
         return out_regex
 
@@ -279,48 +291,45 @@ class YalexReader:
         secuence_end = None
 
         while len(regex) > 0:
-            actual = regex.pop(0)
-            lookAhead = regex[0] if len(regex) > 0 else None
+            actual = ord(regex.pop(0))
+            lookAhead = ord(regex[0]) if len(regex) > 0 else None
 
-            if actual in ["'", '"']:
+            if actual in [ord("'"), ord('"')]:
                 reading_exp = not reading_exp
                 if not reading_exp and secuence_start is not None:
                     secuence_end = expresions[-1]
 
             if reading_exp:
-                if actual in ["'", '"']:
+                if actual in [ord("'"), ord('"')]:
                     continue
 
                 new_exp = actual
 
-                if actual == '\\':
-                    if lookAhead == 'n':
-                        new_exp = '\n'
-                    elif lookAhead == 't':
-                        new_exp = '\t'
-                    elif lookAhead == 's':
-                        new_exp = ' '
+                if actual == ord('\\'):
+                    if lookAhead == ord('n'):
+                        new_exp = ord('\n')
+                    elif lookAhead == ord('t'):
+                        new_exp = ord('\t')
+                    elif lookAhead == ord('s'):
+                        new_exp = ord(' ')
                     regex.pop(0)
 
-                new_exp = '[' if new_exp == '(' else new_exp
-                new_exp = ']' if new_exp == ')' else new_exp
                 expresions.append(new_exp)
 
                 if new_exp not in self.alphabet:
                     self.alphabet.append(new_exp)
 
-            if actual == '-' and not reading_exp:
+            if actual == ord('-') and not reading_exp:
                 secuence_start = expresions[-1]
 
             if secuence_start is not None and secuence_end is not None:
-                start = ord(secuence_start) + 1
-                end = ord(secuence_end)
+                start = secuence_start + 1
+                end = secuence_end
 
                 while start < end:
-                    string_char = chr(start)
-                    if string_char not in self.alphabet:
-                        self.alphabet.append(string_char)
-                    expresions.append(string_char)
+                    if start not in self.alphabet:
+                        self.alphabet.append(start)
+                    expresions.append(start)
                     start += 1
 
                 secuence_end = None
@@ -333,25 +342,34 @@ class YalexReader:
 
         return self._toRegexOr(expresions)
 
-    def _toRegexOr(self, expresions: list) -> str:
+    def _toRegexOr(self, expresions: list) -> int | list:
         if len(expresions) == 1:
-            return expresions[0]
+            return expresions
 
-        or_exp: str = '('
+        or_exp: list = ['(']
 
         for exp in expresions:
             if len(or_exp) == 1:
-                or_exp += exp
+                if type(exp) == list:
+                    or_exp = or_exp + exp
+                else:
+                    or_exp.append(exp)
                 continue
 
-            or_exp += '|'
-            or_exp += exp
+            or_exp.append('|')
 
-        or_exp += ')'
+            if type(exp) == list:
+                or_exp = or_exp + exp
+
+            else:
+                or_exp.append(exp)
+
+        or_exp.append(')')
         return or_exp
 
     def __repr__(self) -> str:
         string = '---- Original Definitions ----\n'
+        return string
 
         for regex in self.ogDefs:
             string += '  -> '
