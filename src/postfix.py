@@ -17,13 +17,13 @@ _ORDER = {
     '*': 3,
     '+': 3,
     '?': 3,
-    '.': 2,
+    '\\': 2,
     '|': 1,
     '(': 0,
 }
 
 
-def _shunting(regex: list) -> list:
+def _shunting(regex: list, alphabet: list) -> list:
     '''
     Implementacion del algoritmo Shunting Yard adaptado a regex
     Referencia: https://www.cs.buap.mx/~andrex/estructuras/AlgoritmoPolacasPosfijo.pdf
@@ -34,8 +34,11 @@ def _shunting(regex: list) -> list:
     while len(regex) > 0:
         char = regex.pop(0)
 
-        if char in ALPHABET:
-            out.append(char)
+        if char in alphabet:
+            out_char = char
+            out_char = '(' if char == '[' else char
+            out_char = ')' if char == ']' else char
+            out.append(out_char)
 
         elif char == '(':
             stack.append(char)
@@ -78,7 +81,7 @@ def _checkParen(regex: list) -> None:
         raise Exception(f'\n"{missing}" missing\n')
 
 
-def _preprocess(regex: list) -> list:
+def _preprocess(regex: list, alphabet: list) -> list:
     '''Agrega puntos de concatenacion a una regex en infix'''
     out = []
 
@@ -89,13 +92,13 @@ def _preprocess(regex: list) -> list:
         if (
             (
                 actual == '('
-                or actual in ALPHABET
+                or actual in alphabet
             ) and (
                 last in ['*', '?', '+', ')']
-                or last in ALPHABET
+                or last in alphabet
             )
         ):
-            out.append('.')
+            out.append('\\')
 
         out.append(actual)
 
@@ -118,11 +121,10 @@ def _postProcess(regex: list) -> list:
     return out
 
 
-def toPostfix(regex: str, augmented=False) -> list:
+def toPostfix(regex: str, augmented=False, alphabet=ALPHABET) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
-    regex = regex.replace(' ', '')
     regex = list(regex)
     _checkParen(regex)
-    regex = regex if '.' in regex else _preprocess(regex)
-    regex = _shunting(regex) + (['#', '.'] if augmented else [])
+    regex = regex if '\\' in regex else _preprocess(regex, alphabet)
+    regex = _shunting(regex, alphabet) + (['#', '\\'] if augmented else [])
     return _postProcess(regex)

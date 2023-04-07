@@ -1,0 +1,12 @@
+(* Lexer para Gramática No. 1 - Expresiones aritméticas simples para variables *)
+
+(* Introducir cualquier header aqui *)
+
+let digit = ['0'-'9']
+let digits = digit+digits
+
+rule tokens = 
+    ws
+  | digits        { return ID }
+
+(* Introducir cualquier trailer aqui *)

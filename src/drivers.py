@@ -36,3 +36,21 @@ def minimizeAFD(afd: AFD, dir: bool) -> AFD:
     filename = 'AFD_Directo_MIN' if dir else 'AFD_SUB_MIN'
     min_afd.drawAutomata(filename)
     return afd
+
+
+def ReadYalex(filepath: str) -> str:
+    ''' Crea un AFD apor construccion directa '''
+    reader: YalexReader = YalexReader(filename=filepath)
+    regex = reader.unifiedRegex
+    alphabet = reader.alphabet
+    regex_ = toPostfix(regex, alphabet=alphabet)
+    print_regex = ''.join(regex_)
+    print_regex = print_regex.replace('.', "'.'")
+    print_regex = print_regex.replace('\\', '.')
+
+    f = open('./out/PostfixRegex.txt', 'w')
+    f.write(print_regex)
+    f.close()
+    r_tree = SyntaxTree(regex_)
+    r_tree.showTree()
+    return regex_
