@@ -1,5 +1,7 @@
 from copy import copy as cp
 
+RESERVED = ['|', '*', '?', '+', '(', ')']
+
 
 class RegularDef:
     def __init__(self, name: str, definition: str) -> None:
@@ -8,6 +10,15 @@ class RegularDef:
 
     def __repr__(self) -> str:
         return f'{self.name} = {self.regex}'
+
+
+class Token:
+    def __init__(self) -> None:
+        self.rule: str = ''
+        self.token: str = ''
+
+    def __repr__(self) -> str:
+        return f'{self.token} = {self.rule}'
 
 
 class YalexReader:
@@ -21,16 +32,96 @@ class YalexReader:
         # Get Regular Definitions from input File
         self.regexDefs: list[RegularDef] = []
         self.ogDefs: list[str] = []
+        self.tokenRules: list = []
+        self.alphabet: list[str] = []
+        rulesLines = []
+        rulesFlag = False
 
         for line in lines:
-            if line.split(' ')[0] == 'let':
-                info = line[3:-1]
-                new_def = self._getDefinition(info)
-                self.ogDefs.append(new_def.__repr__())
-                self._process_regex(new_def)
-                self.regexDefs.append(new_def)
+            prefix = line.split(' ')[0]
 
-            # TODO: Rules processing
+            match prefix:
+                # Manejo de definiciones regulares
+                case 'let':
+                    info = line[3:-1]
+                    new_def = self._getDefinition(info)
+                    self.ogDefs.append(new_def.__repr__())
+                    new_def.regex = self._process_regex(new_def.regex)
+                    self.regexDefs.append(new_def)
+
+                # guardar lineas de definicion de rules
+                case 'rule':
+                    rulesFlag = True
+
+                case '(*':
+                    pass
+
+                case _:
+                    if not rulesFlag:
+                        continue
+
+                    if (
+                        (
+                            len(rulesLines) == 0
+                            or self._firstCHarInLine(line) == '|'
+                        ) and len(line) > 1
+                    ):
+                        rulesLines.append(list(line))
+
+        self._process_ruleTokens(rulesLines)
+        self.unifiedRegex = self._getFinalRegex()
+        self.printFile()
+
+    def _getFinalRegex(self) -> str:
+        expresions = [token.rule for token in self.tokenRules]
+        return self._toRegexOr(expresions)
+
+    def _process_ruleTokens(self, rulesLines) -> None:
+        for exp in rulesLines:
+            rule: Token = Token()
+            reading_def = True
+            token_readed = False
+
+            while len(exp) > 0 and not token_readed:
+                actual = exp.pop(0)
+
+                if actual == '|':
+                    continue
+
+                if actual == ' ' and reading_def:
+                    continue
+
+                if actual == '{':
+                    reading_def = False
+                    rule.rule = self._process_regex(rule.rule)
+                    continue
+
+                if not reading_def:
+                    if actual == '}':
+                        token_readed = True
+                        rule.token = self._process_token(rule.token)
+                        self.tokenRules.append(rule)
+                        continue
+
+                    rule.token += actual
+
+                else:
+                    rule.rule += actual
+
+    def _process_token(self, token: str) -> str:
+        token = token[1:] if token[0] == ' ' else token
+        token = token[:-1] if token[-1] == ' ' else token
+        return_stm, token_name = token.split(' ')
+        return token_name
+
+    def _firstCHarInLine(self, line):
+        line = list(line)
+        actual = line.pop(0)
+
+        while actual == ' ':
+            actual = line.pop(0)
+
+        return actual
 
     def _getDefinition(self, line: list) -> RegularDef:
         line = list(line)
@@ -63,8 +154,8 @@ class YalexReader:
 
         return RegularDef(new_name, new_def)
 
-    def _process_regex(self, definition: RegularDef) -> None:
-        regex = list(definition.regex)
+    def _process_regex(self, definition: str) -> None:
+        regex = list(definition)
 
         # Manejo de definiciones nuevas
         if regex[0] == '[':
@@ -84,15 +175,13 @@ class YalexReader:
                     print(f'(Error Lexico) Expresion invalida: {def_string}')
                     return
 
-            definition.regex = self._raw_exp(regex[1:-1])
-            return
+            return self._raw_exp(regex[1:-1])
 
         # Manejo de definiciones que referencian definiciones previas
         regex = regex[:-1] if regex[-1] == '\n' else list(regex)
-        definition.regex = self._recursive_expresion(regex)
+        return self._recursive_expresion(regex)
 
     def _recursive_expresion(self, regex: list) -> str:
-        # return ''.join(regex)
         og_regex = cp(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
@@ -117,10 +206,14 @@ class YalexReader:
 
                 while len(posible_defs) > 0:
                     actual = regex.pop(0)
+                    lookAhead = regex[0] if len(regex) > 0 else None
                     not_defs = []
 
                     for def_ in posible_defs:
                         if actual != def_[char_count]:
+                            not_defs.append(def_)
+
+                        if len(def_) > char_count + 1 and lookAhead != def_[char_count + 1]:
                             not_defs.append(def_)
 
                         if actual == def_[char_count] and len(def_) == char_count + 1:
@@ -128,7 +221,8 @@ class YalexReader:
                             not_defs.append(def_)
 
                     for def_ in not_defs:
-                        posible_defs.remove(def_)
+                        if def_ in posible_defs:
+                            posible_defs.remove(def_)
 
                     char_count += 1
                     backTrace += actual
@@ -169,6 +263,11 @@ class YalexReader:
                 out_regex += self._raw_exp(raw_exp)
                 continue
 
+            if (
+                actual not in RESERVED
+                and actual not in self.alphabet
+            ):
+                self.alphabet.append(actual)
             out_regex += actual
 
         return out_regex
@@ -199,9 +298,16 @@ class YalexReader:
                         new_exp = '\n'
                     elif lookAhead == 't':
                         new_exp = '\t'
+                    elif lookAhead == 's':
+                        new_exp = ' '
                     regex.pop(0)
 
+                new_exp = '[' if new_exp == '(' else new_exp
+                new_exp = ']' if new_exp == ')' else new_exp
                 expresions.append(new_exp)
+
+                if new_exp not in self.alphabet:
+                    self.alphabet.append(new_exp)
 
             if actual == '-' and not reading_exp:
                 secuence_start = expresions[-1]
@@ -212,6 +318,8 @@ class YalexReader:
 
                 while start < end:
                     string_char = chr(start)
+                    if string_char not in self.alphabet:
+                        self.alphabet.append(string_char)
                     expresions.append(string_char)
                     start += 1
 
@@ -226,37 +334,51 @@ class YalexReader:
         return self._toRegexOr(expresions)
 
     def _toRegexOr(self, expresions: list) -> str:
-        or_exp: str = ''
+        if len(expresions) == 1:
+            return expresions[0]
+
+        or_exp: str = '('
 
         for exp in expresions:
-            if len(or_exp) == 0:
-                or_exp = exp
+            if len(or_exp) == 1:
+                or_exp += exp
                 continue
 
-            or_exp = '(' + or_exp
             or_exp += '|'
             or_exp += exp
-            or_exp += ')'
 
+        or_exp += ')'
         return or_exp
 
     def __repr__(self) -> str:
         string = '---- Original Definitions ----\n'
 
         for regex in self.ogDefs:
-            string += '  - '
+            string += '  -> '
             string += regex
             string += '\n'
 
         string += '\n---- Processed Definitions ----\n'
 
         for regex in self.regexDefs:
-            string += '  - '
+            string += '  -> '
             string += regex.__repr__()
             string += '\n'
 
         string += '\n---- Rules ----\n'
 
+        for token in self.tokenRules:
+            string += '  -> '
+            string += token.__repr__()
+            string += '\n'
+
         string += '\n---- Final Regex ----\n'
+        string += self.unifiedRegex
+        string += '\n'
 
         return string
+
+    def printFile(self):
+        f = open('./out/steps.txt', 'w')
+        f.write(self.__repr__())
+        f.close()
