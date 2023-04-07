@@ -1,4 +1,19 @@
+'''
+*************************************************
+Universidad del Valle de Guatemala
+Diseño de Lenguajes de Programación
+
+YalexScanner.py
+- Lector de archivos yalex.
+  El output es una expresion regular
+  que define un lenguaje.
+
+Autor: Diego Cordova - 20212
+*************************************************
+'''
+
 from copy import copy as cp
+from .util import transformPostfix
 
 RESERVED = ['|', '*', '?', '+', '(', ')']
 
@@ -32,7 +47,7 @@ class YalexReader:
         # Get Regular Definitions from input File
         self.regexDefs: list[RegularDef] = []
         self.ogDefs: list[str] = []
-        self.tokenRules: list = []
+        self.tokenRules: list[Token] = []
         self.alphabet: list[str] = []
         rulesLines = []
         rulesFlag = False
@@ -45,7 +60,7 @@ class YalexReader:
                 case 'let':
                     info = line[3:-1]
                     new_def = self._getDefinition(info)
-                    self.ogDefs.append(new_def.__repr__())
+                    self.ogDefs.append([new_def.name, new_def.regex])
                     new_def.regex = self._process_regex(new_def.regex)
                     self.regexDefs.append(new_def)
 
@@ -189,7 +204,6 @@ class YalexReader:
         og_regex = cp(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
-        # TODO no se puede usar una lista como key de ditionary
         starters = [regex[0] for regex in regex_names]
         out_regex = []
 
@@ -369,29 +383,34 @@ class YalexReader:
 
     def __repr__(self) -> str:
         string = '---- Original Definitions ----\n'
-        return string
 
         for regex in self.ogDefs:
             string += '  -> '
-            string += regex
+            string += transformPostfix(regex[0])
+            string += ' = '
+            string += transformPostfix(regex[1])
             string += '\n'
 
         string += '\n---- Processed Definitions ----\n'
 
         for regex in self.regexDefs:
             string += '  -> '
-            string += regex.__repr__()
+            string += transformPostfix(regex.name)
+            string += ' = '
+            string += transformPostfix(regex.regex)
             string += '\n'
 
         string += '\n---- Rules ----\n'
 
         for token in self.tokenRules:
             string += '  -> '
-            string += token.__repr__()
+            string += transformPostfix(token.token)
+            string += ' = '
+            string += transformPostfix(token.rule)
             string += '\n'
 
         string += '\n---- Final Regex ----\n'
-        string += self.unifiedRegex
+        string += transformPostfix(self.unifiedRegex)
         string += '\n'
 
         return string

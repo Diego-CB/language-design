@@ -8,8 +8,8 @@
 ## ✅ Rúbrica
 
 - [x] Correcta interpretación de Expresiones Regulares en Definición Regular.
-- [ ] Generación de Árbol de Expresión, representando cada Expresión Regular dentro de la Definición Regular.
-- [ ] Generación de un único árbol de Expresión.
+- [x] Generación de Árbol de Expresión, representando cada Expresión Regular dentro de la Definición Regular.
+- [x] Generación de un único árbol de Expresión.
 
 ## 🗃️ Estructura de Archivos
 
@@ -27,7 +27,7 @@
     - `Subconjuntos.py`: Implementación de algoritmo de construccion de subconjuntos.
     - `DirectCons.py`: Implementación de algoritmo de construccion directa de AFD.
     - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
-    - `YalexReader.py`: Lectura de archivos .yal
+    - `YalexScanner.py`: Lectura de archivos .yal
 
 - **`Renders`**: Dentro de esta carpeta se encuentran las imagenes resultantes de los AF y el arbol de syntaxis
 

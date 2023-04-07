@@ -97,6 +97,7 @@ OPERATORS = ['.', '|', '*', '?', '+', '(', ')']
 
 
 def transformPostfix(postfix: list[str | int]) -> str:
+    ''' Transforma una postfix con ASCII a una postfix para impresion '''
     new_postfix = ''
 
     for char in postfix:
