@@ -29,7 +29,9 @@
     - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
     - `YalexScanner.py`: Lectura de archivos .yal
 
-- **`Renders`**: Dentro de esta carpeta se encuentran las imagenes resultantes de los AF y el arbol de syntaxis
+- **`out`**: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
+  - `stepts.txt`: Descripcion del proceso de lectura YAlex
+  - `Tree.png`: Arbol de expresion resultante
 
 - **`Examples`**: Dentro de esta carpeta se encuentran ejemplos de archivos yalex.
 
@@ -39,6 +41,9 @@
 
 - Ejecute el archivo `main.py` escribiendo como argumento el path al archivo yalex a leer.
     > Ejemplo: py main.py <<Archivo.yal>>
+
+1. Se crearan varias carpetas `__pycache__` con compilados del codigo.
+2. Se crearan dos archivos `./out/steps.txt` y `./out/tree.txt` con el autput de la lectura del archivo YALex.
 
 ## 🤓 Autor
 
