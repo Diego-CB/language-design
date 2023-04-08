@@ -174,6 +174,9 @@ class SyntaxTree:
         elif label == ' ':
             label = "' '"
 
+        if actualNode.data == 92:
+            label = '/'
+
         actual = (
             str(actualNode.printId),
             label,

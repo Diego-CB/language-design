@@ -284,6 +284,17 @@ class YalexReader:
                 out_regex = out_regex + self._raw_exp(raw_exp)
                 continue
 
+            if actual == ord('_'):
+                expresions = []
+
+                for ascii in range(32, 127):
+                    expresions.append(ascii)
+                    if ascii not in self.alphabet:
+                        self.alphabet.append(ascii)
+
+                out_regex = out_regex + self._toRegexOr(expresions)
+                continue
+
             if (
                 chr(actual) not in RESERVED
                 and actual not in self.alphabet
@@ -356,8 +367,11 @@ class YalexReader:
 
         return self._toRegexOr(expresions)
 
-    def _toRegexOr(self, expresions: list) -> int | list:
+    def _toRegexOr(self, expresions: list) -> list:
         if len(expresions) == 1:
+            if type(expresions[0]) == list:
+                return expresions[0]
+
             return expresions
 
         or_exp: list = ['(']
