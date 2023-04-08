@@ -19,6 +19,14 @@ RESERVED = ['|', '*', '?', '+', '(', ')']
 
 
 class RegularDef:
+    '''
+    Objeto interno para representación de definiciones regulares
+
+    Atributos:
+        name (list): nombre de la definición regular
+        regex (list): regex de la definición regular
+    '''
+
     def __init__(self, name: list, definition: list) -> None:
         self.name: list = name
         self.regex: list = definition
@@ -28,6 +36,14 @@ class RegularDef:
 
 
 class Token:
+    '''
+    Objeto interno para representación de reglas de tokens
+
+    Atributos:
+        name (rule): regex del token
+        regex (token): Nombre del token
+    '''
+
     def __init__(self) -> None:
         self.rule: list = ''
         self.token: list = ''
@@ -37,7 +53,17 @@ class Token:
 
 
 class YalexReader:
-    # TODO: Comments on YalexReader file
+    '''
+    Objeto Lector de Yalex
+
+    Atributos:
+        regexDefs (list[RegularDef]): definiciones regulares
+        ogDefs (list[str]): Definiciones regulares isn procesar
+        tokenRules (list[Token]): Reglas de tokens
+        alphabet (list[str]): alphabeto del archivo yalex (lenguaje)
+        unifiedRegex (list[str|int]): regex unificade que representa las reglas de tokens
+    '''
+
     def __init__(self, filename: str) -> None:
         # File Reading
         file = open(filename)
@@ -83,11 +109,14 @@ class YalexReader:
                     ):
                         rulesLines.append(list(line))
 
+        # Procesamiento de token rules
         self._process_ruleTokens(rulesLines)
+        # Generacion de regex unificada
         self.unifiedRegex = self._getFinalRegex()
         self.printFile()
 
     def _getFinalRegex(self) -> str:
+        ''' Genera regex unificada en base a self.tokenRules '''
         expresions = []
 
         for token in self.tokenRules:
@@ -96,6 +125,8 @@ class YalexReader:
         return self._toRegexOr(expresions)
 
     def _process_ruleTokens(self, rulesLines) -> None:
+        ''' Convierte los tokens a regex '''
+
         for exp in rulesLines:
             rule: Token = Token()
             reading_def = True
@@ -128,12 +159,14 @@ class YalexReader:
                     rule.rule += actual
 
     def _process_token(self, token: list) -> str:
+        ''' Devuelve le nombre del token '''
         token = token[1:] if token[0] == ' ' else token
         token = token[:-1] if token[-1] == ' ' else token
         return_stm, token_name = token.split(' ')
         return token_name
 
     def _firstCHarInLine(self, line):
+        ''' Devuelve el primer caracter en la linea de texto '''
         line = list(line)
         actual = line.pop(0)
 
@@ -143,6 +176,7 @@ class YalexReader:
         return actual
 
     def _getDefinition(self, line: list) -> RegularDef:
+        ''' Devuelve una definicion en base a la linea de codigo yalex '''
         line = list(line)
         new_name = []
         new_def = ''
@@ -174,6 +208,16 @@ class YalexReader:
         return RegularDef(new_name, new_def)
 
     def _process_regex(self, definition: str) -> None:
+        ''' 
+            Procesa una nueva regex 
+
+            raw expresion: 
+                - Expresion regular con definiciones nuevas
+
+            recursive expression:
+                - Definicion regular que utiliza definiciones
+                  regulares definidas
+        '''
         regex = list(definition)
 
         # Manejo de definiciones nuevas
@@ -201,12 +245,16 @@ class YalexReader:
         return self._recursive_expresion(regex)
 
     def _recursive_expresion(self, regex: list) -> str:
+        ''' Procesamiento de Expresiones regulares que utilizad definiciones pasadas '''
+
+        # Definiciones pasadas
         og_regex = cp(regex)
         definitions = self.regexDefs
         regex_names = [regex.name for regex in definitions]
         starters = [regex[0] for regex in regex_names]
         out_regex = []
 
+        # Escaneo de la regex
         while len(regex) > 0:
             actual = ord(regex.pop(0))
 
@@ -284,9 +332,11 @@ class YalexReader:
                 out_regex = out_regex + self._raw_exp(raw_exp)
                 continue
 
+            # Simbolo de cualquier caracter
             if actual == ord('_'):
                 expresions = []
 
+                # Se utiliza del ASCII 32 al 126
                 for ascii in range(32, 127):
                     expresions.append(ascii)
                     if ascii not in self.alphabet:
@@ -310,20 +360,24 @@ class YalexReader:
         return out_regex
 
     def _raw_exp(self, regex: list) -> str:
+        ''' Procesamiento de definiciones regulares nuevas '''
         expresions: list = []
         reading_exp: bool = False
         secuence_start = None
         secuence_end = None
 
+        # Escaneo de Regex
         while len(regex) > 0:
             actual = ord(regex.pop(0))
             lookAhead = ord(regex[0]) if len(regex) > 0 else None
 
+            # Cambio de estado
             if actual in [ord("'"), ord('"')]:
                 reading_exp = not reading_exp
                 if not reading_exp and secuence_start is not None:
                     secuence_end = expresions[-1]
 
+            # Estado: Leer expresion
             if reading_exp:
                 if actual in [ord("'"), ord('"')]:
                     continue
@@ -344,9 +398,11 @@ class YalexReader:
                 if new_exp not in self.alphabet:
                     self.alphabet.append(new_exp)
 
+            # Inicio de secuencia
             if actual == ord('-') and not reading_exp:
                 secuence_start = expresions[-1]
 
+            # Inicio y final de secuencia encontrados
             if secuence_start is not None and secuence_end is not None:
                 start = secuence_start + 1
                 end = secuence_end
@@ -360,6 +416,7 @@ class YalexReader:
                 secuence_end = None
                 secuence_start = None
 
+        # Manejo de errores
         if secuence_start is not None or reading_exp:
             regex = '[' + ''.join(regex) + ']'
             print('(Error Lexico) Expresion invalida:', regex)
@@ -368,6 +425,7 @@ class YalexReader:
         return self._toRegexOr(expresions)
 
     def _toRegexOr(self, expresions: list) -> list:
+        ''' Devuelve una regex que acepta cualquiera de las expresiones en (expresions)'''
         if len(expresions) == 1:
             if type(expresions[0]) == list:
                 return expresions[0]
@@ -430,6 +488,7 @@ class YalexReader:
         return string
 
     def printFile(self):
+        ''' Escribe el archivo ./out/steps.txt con el proceso de lectura YALex '''
         f = open('./out/steps.txt', 'w')
         f.write(self.__repr__())
         f.close()
