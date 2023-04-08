@@ -16,24 +16,38 @@ from .util import *
 
 # ---- Funciones auxiliares ----
 
-def _get_subgroup(q:int, a:str):
+
+def _get_subgroup(q: int, a: str) -> int | None:
+    '''
+        Devuelve el indice del subgrupo al que llega el estado q con el simbolo a
+
+        :param q: int
+            Estado del que se hace la transicion
+        :param a: str
+            Symbolo con el que se hace la transicion
+
+    '''
     arrive = afd.move(q, a)
-    if arrive is None: return None
+    if arrive is None:
+        return None
 
     for index, group in enumerate(SubGroups):
         if arrive in group:
             return index
 
-def _getqKeys(destins, q):
-    q_keys = []
-    for k in destins.keys():
-        if k[0] == q:
-            q_keys.append(k)
 
-    return q_keys
+def _compareMoves(q: int, last_q: int) -> bool:
+    '''
+        Devuelve True si q y last_q van a los mismos subgrupos con cada una de sus transiciones
+        y  false en caso contrario
 
-def _compareMoves(q, last_q):
-    if last_q is None: return False
+        :param q: int
+            Estado 1 a comparar
+        :param last_q: int
+            Estado 2 a comparar
+    '''
+    if last_q is None:
+        return False
     for a in symbols:
         if _get_subgroup(q, a) != _get_subgroup(last_q, a):
             return False
@@ -42,7 +56,8 @@ def _compareMoves(q, last_q):
 
 # ---- Algoritmo de Minimizacion de AFD ----
 
-def min_AFD(afd_max:AFD) -> AFD:
+
+def min_AFD(afd_max: AFD) -> AFD:
     ''' Construccion de subconjuntos para generacion de AFD '''
     global SubGroups
     global afd
@@ -50,11 +65,11 @@ def min_AFD(afd_max:AFD) -> AFD:
     afd = afd_max
     symbols = afd.symbols
 
-    S:list = afd.finals
-    F:list = [q for q in afd.estados if q not in afd.finals]
-    SubGroups = [S] if len(F) == 0 else [S, F] 
+    S: list = afd.finals
+    F: list = [q for q in afd.estados if q not in afd.finals]
+    SubGroups = [S] if len(F) == 0 else [S, F]
     inPartition = True
-    
+
     while inPartition:
         newG = []
         q_inG = []
@@ -97,14 +112,15 @@ def min_AFD(afd_max:AFD) -> AFD:
                     finals.append(newSubState)
         SubGroups[index] = newSubState
 
-    transitions:dict = {}
+    transitions: dict = {}
 
     for G in SubGroups:
         for a in symbols:
             key = (G, a)
             q = G.states[0]
             destino = afd.move(q, a)
-            if destino is None: continue
+            if destino is None:
+                continue
             for subG in SubGroups:
                 if destino in subG.states:
                     destino = subG

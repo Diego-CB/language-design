@@ -14,6 +14,7 @@ from abc import ABC, abstractmethod
 import graphviz
 import os
 
+
 class Automata(ABC):
     '''Objeto Automata (abstracto)
 
@@ -23,13 +24,14 @@ class Automata(ABC):
         - initial (int): Estado inicial del automata
         - transitions (dict): transiciones del automata
     '''
-    def __init__(self) -> None:
-        self.estados:list = None
-        self.symbols:list = None
-        self.initial:int = None
-        self.transitions:dict = None
 
-    def move(self, state:int, symbol:str) -> list|int:
+    def __init__(self) -> None:
+        self.estados: list = None
+        self.symbols: list = None
+        self.initial: int = None
+        self.transitions: dict = None
+
+    def move(self, state: int, symbol: str) -> list | int:
         tran = (state, symbol)
         if tran not in self.transitions.keys():
             return None
@@ -40,7 +42,7 @@ class Automata(ABC):
     def drawAutomata(self) -> None: pass
 
     @abstractmethod
-    def simulate(self, c:str) -> bool: pass
+    def simulate(self, c: str) -> bool: pass
 
     def __repr__(self) -> str:
         return f'''
@@ -49,6 +51,7 @@ class Automata(ABC):
         transitions: {self.transitions}
         Initial: {self.initial}
         '''
+
 
 class AFN(Automata):
     '''Objeto Automata finito no determinista
@@ -63,28 +66,30 @@ class AFN(Automata):
     Metodos:
         - 
     '''
+
     def __init__(self,
-        estados:list,
-        symbols:list,
-        initial:int,
-        final:int,
-        transitions:dict
-    ) -> None:
+                 estados: list,
+                 symbols: list,
+                 initial: int,
+                 final: int,
+                 transitions: dict
+                 ) -> None:
         super().__init__()
         self.final = final
-        self.estados:list = estados
-        self.symbols:list = symbols
-        self.initial:int = initial
-        self.transitions:dict = transitions
+        self.estados: list = estados
+        self.symbols: list = symbols
+        self.initial: int = initial
+        self.transitions: dict = transitions
 
-    def move(self, state:int, symbol:str) -> list:
+    def move(self, state: int, symbol: str) -> list:
         moved = super().move(state, symbol)
         moved = ([] if (moved is None) else moved)
         return moved
 
-    def e_closure(self, q:int) -> list:
+    def e_closure(self, q: int) -> list:
         subState = self.move(q, '^')
-        if len(subState) == 0: return [q]
+        if len(subState) == 0:
+            return [q]
 
         for state in subState:
             subState = subState + self.e_closure(state)
@@ -93,9 +98,9 @@ class AFN(Automata):
         subState = list(set(subState))
         subState.sort()
         return subState
-    
-    def simulate(self, c:str) -> bool:
-        S:list = self.e_closure(self.initial)
+
+    def simulate(self, c: str) -> bool:
+        S: list = self.e_closure(self.initial)
 
         for char in c:
             next_states = []
@@ -110,7 +115,6 @@ class AFN(Automata):
 
         return (self.final in S)
 
-    
     def drawAutomata(self):
         # create a new graph
         graph = graphviz.Digraph()
@@ -120,11 +124,12 @@ class AFN(Automata):
             shape, style, fillcolor = 'circle', 'filled', 'white'
 
             if node == self.final:
-                shape='doublecircle'
-                fillcolor='#ff9999'
+                shape = 'doublecircle'
+                fillcolor = '#ff9999'
 
-            fillcolor='skyblue' if node == self.initial else fillcolor
-            graph.node(f'q{node}', shape=shape, fillcolor=fillcolor, style=style)
+            fillcolor = 'skyblue' if node == self.initial else fillcolor
+            graph.node(f'q{node}', shape=shape,
+                       fillcolor=fillcolor, style=style)
 
         # add edges to the graph
         for k in self.transitions.keys():
@@ -142,7 +147,8 @@ class AFN(Automata):
     def __repr__(self) -> str:
         return super().__repr__() + f'''
         Final: {self.final}
-        '''    
+        '''
+
 
 class AFD(Automata):
     '''Objeto Automata finito determinista
@@ -154,26 +160,28 @@ class AFD(Automata):
         - transitions (dict): transiciones del automata
         - finals (list): estados de aceptacion del automata
     '''
-    def __init__(self,
-        estados:list,
-        symbols:list,
-        initial:int,
-        finals:list,
-        transitions:dict
-    ) -> None:
-        super().__init__()
-        self.finals:list = finals
-        self.estados:list = estados
-        self.symbols:list = symbols
-        self.initial:int = initial
-        self.transitions:dict = transitions
 
-    def simulate(self, c:str) -> bool:
-        S:int = self.initial
+    def __init__(self,
+                 estados: list,
+                 symbols: list,
+                 initial: int,
+                 finals: list,
+                 transitions: dict
+                 ) -> None:
+        super().__init__()
+        self.finals: list = finals
+        self.estados: list = estados
+        self.symbols: list = symbols
+        self.initial: int = initial
+        self.transitions: dict = transitions
+
+    def simulate(self, c: str) -> bool:
+        S: int = self.initial
 
         for char in c:
             next_state = self.move(S, char)
-            if next_state is None: return False
+            if next_state is None:
+                return False
             S = next_state
 
         return (S in self.finals)
@@ -187,11 +195,12 @@ class AFD(Automata):
             shape, style, fillcolor = 'circle', 'filled', 'white'
 
             if node in self.finals:
-                shape='doublecircle'
-                fillcolor='#ff9999'
+                shape = 'doublecircle'
+                fillcolor = '#ff9999'
 
             fillcolor = 'skyblue' if node == self.initial else fillcolor
-            graph.node(f'q{node}', shape=shape, fillcolor=fillcolor, style=style)
+            graph.node(f'q{node}', shape=shape,
+                       fillcolor=fillcolor, style=style)
 
         # add edges to the graph
         for k in self.transitions.keys():

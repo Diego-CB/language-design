@@ -14,6 +14,7 @@ from ..alfabeto import OPERATORS, ALPHABET
 import graphviz
 import os
 
+
 class Node:
     ''' Esta clase representa un nodo en el arbol de sintaxis
 
@@ -25,13 +26,15 @@ class Node:
         printId (int): Posicion del caracter para impresion del arbol
         followPos (lsit): followpos para ese elemento en el arbol
     '''
+
     def __init__(self) -> None:
-        self.data:str = None
-        self.left:self = None
-        self.right:self = None
-        self.position:int = None
-        self.printId:int = None
-        self.followPos:list = []
+        self.data: str = None
+        self.left: self = None
+        self.right: self = None
+        self.position: int = None
+        self.printId: int = None
+        self.followPos: list = []
+
 
 class SyntaxTree:
     ''' Esta clase representa un arbol de sintaxis
@@ -57,7 +60,7 @@ class SyntaxTree:
 
     def reset_i(self):
         self.set_i(0)
-    
+
     # Variable estatica _i: Posicion de caracteres en el arbol
     _pid = 0
 
@@ -73,23 +76,23 @@ class SyntaxTree:
         self.set_pid(0)
 
     # Constructor
-    def __init__(self, postfix:list) -> None:
+    def __init__(self, postfix: list) -> None:
         '''Crea un arbol de sintaxis a partir de una regex en postfix'''
         self.nodes = None
         self.edges = None
         self.root = Node()
-        self.symbols:list = []
-        self.symbolMap:dict = {}
-        self.regex = ''.join(postfix)
+        self.symbols: list = []
+        self.symbolMap: dict = {}
+        # self.regex = ''.join(postfix)
         self._fillTree(self.root, postfix)
         self.reset_pid()
-        
+
     # Auxiliar del constructor
-    def _fillTree(self, actualNode:Node, postfix:str) -> Node:
+    def _fillTree(self, actualNode: Node, postfix: str) -> Node:
         '''Recorre la expresion postfix de forma recursiva para llenar el arbol'''
         actualNode.data = postfix.pop()
 
-        # Print Id 
+        # Print Id
         actual_pid = self.get_pid()
         actualNode.printId = actual_pid
         self.set_pid(actual_pid + 1)
@@ -101,7 +104,7 @@ class SyntaxTree:
         ):
             if actualNode.data not in self.symbols:
                 self.symbols.append(actualNode.data)
-            
+
             actual_i = self.get_i()
             if actualNode.data == '#':
                 self.final_index = actual_i
@@ -113,7 +116,8 @@ class SyntaxTree:
         if actualNode.data in OPERATORS and len(postfix) == 0:
             raise Exception(f'\nOperator missing for {actualNode.data}\n')
 
-        if len(postfix) == 0: return
+        if len(postfix) == 0:
+            return
 
         # Hijo Derecho
         actualNode.left = Node()
@@ -121,7 +125,7 @@ class SyntaxTree:
             return self._fillTree(actualNode.left, postfix)
 
         actualNode.right = Node()
-        right:list = [postfix.pop()]
+        right: list = [postfix.pop()]
 
         if right[0] in OPERATORS:
             lastOp = [0]
@@ -130,7 +134,7 @@ class SyntaxTree:
             while params > 0:
                 if len(postfix) == 0:
                     raise Exception(f'\nOperator missing for {lastOp}\n')
-                
+
                 params -= 1
                 tempChar = postfix.pop()
 
@@ -148,21 +152,46 @@ class SyntaxTree:
         self._fillTree(actualNode.left, postfix)
 
     # Dibujo de grafo
-    def _getNodes(self, actualNode:Node) -> None:
+    def _getNodes(self, actualNode: Node) -> None:
         '''Guarda la informacion para impresion de arbol'''
-        actual = actualNode.data + str(actualNode.printId)
+        shape = 'plaintext'
+        if actualNode.data in OPERATORS:
+            shape = 'circle'
+
+        if actualNode == self.root:
+            shape = 'doublecircle'
+
+        label = chr(actualNode.data) \
+            if type(actualNode.data) == int \
+            else actualNode.data
+
+        if label == '\n':
+            label = '/n'
+
+        elif label == '\t':
+            label = '/t'
+
+        elif label == ' ':
+            label = "' '"
+
+        if actualNode.data == 92:
+            label = '/'
+
+        actual = (
+            str(actualNode.printId),
+            label,
+            shape
+        )
         self.nodes.append(actual)
 
         if actualNode.right is not None:
-            right:Node = actualNode.right
-            right_data = right.data + str(right.printId)
-            self.edges.append((actual, right_data))
+            right: Node = actualNode.right
+            self.edges.append((actual[0], str(right.printId)))
             self._getNodes(right)
-        
+
         if actualNode.left is not None:
-            left:Node = actualNode.left
-            left_data = left.data + str(left.printId)
-            self.edges.append((actual, left_data))
+            left: Node = actualNode.left
+            self.edges.append((actual[0], str(left.printId)))
             self._getNodes(left)
 
     def showTree(self) -> None:
@@ -178,17 +207,17 @@ class SyntaxTree:
         G = graphviz.Digraph()
 
         for node in self.nodes:
-            G.node(node, shape='circle')
-        
+            G.node(node[0], node[1], shape=node[2])
+
         for edge in self.edges:
             G.edge(*edge)
 
         # render del arbol
-        path = './Renders/Tree'
+        path = './out/Tree'
         G.render(filename=path, format='png')
         os.remove(path)
 
-    def _nullable(self, n:Node=None) -> bool:
+    def _nullable(self, n: Node = None) -> bool:
         ''' Calcula nullable para n '''
         match n.data:
             # Caso Epsilon
@@ -205,7 +234,7 @@ class SyntaxTree:
             case '*':
                 ''' Si es kleen o nullable se devuelve true '''
                 return True
-            
+
             case '?':
                 return True
 
@@ -251,7 +280,6 @@ class SyntaxTree:
             ''' Si es un elemento del alfabeto se devuelve su posicion '''
             return [n.position]
 
-
     def _lastpos(self, n: Node):
         ''' calcula lastpos para el nodo n recursivamente '''
         root = n.data
@@ -269,7 +297,7 @@ class SyntaxTree:
             if self._nullable(n.right):
                 # la union de firstops de los hijos derecho e izquierdo
                 return self._lastpos(n.left) + self._lastpos(n.right)
-            
+
             return self._lastpos(n.right)
 
         elif root == '|':
@@ -289,7 +317,6 @@ class SyntaxTree:
             ''' Si pertenece al alfabeto se devuelve el mismo '''
             return [n]
 
-
     def _followpos(self, n: Node):
         '''
         Recorre el arbol recursivamente calculando followpos
@@ -301,8 +328,8 @@ class SyntaxTree:
             Se agrega el firspos del nodo derecho al izquierdo
             en caso sea concatenacion
             '''
-            left_last:list[Node] = self._lastpos(n.left)  
-            right_first:list[Node] = self._firstpos(n.right)
+            left_last: list[Node] = self._lastpos(n.left)
+            right_first: list[Node] = self._firstpos(n.right)
 
             for node in left_last:
                 node.followPos = node.followPos + right_first
@@ -316,8 +343,8 @@ class SyntaxTree:
             En caso sea algun operador unario:
             Se le agrega el firstpos del nodo al lastpos del nodo
             '''
-            last:list[Node] = self._lastpos(n)
-            first:list[Node] = self._firstpos(n)
+            last: list[Node] = self._lastpos(n)
+            first: list[Node] = self._firstpos(n)
 
             for node in last:
                 node.followPos = node.followPos + first
@@ -339,7 +366,7 @@ class SyntaxTree:
         '''
         Devuelve un diccionario con el followpos de los simbolos del arbol
         '''
-        follow_pos:dict = {}
+        follow_pos: dict = {}
         if n is None:
             n = self.root
             self._followpos(n=self.root)
@@ -358,7 +385,7 @@ class SyntaxTree:
             follow_pos[n.position] = n.followPos
 
         return follow_pos
-    
+
     def get_firstPos(self):
         first = self._firstpos(self.root)
         first.sort()

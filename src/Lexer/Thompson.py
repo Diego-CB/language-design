@@ -2,6 +2,7 @@ from .Tree import SyntaxTree, Node
 from .Automata import AFN
 from ..alfabeto import ALPHABET
 
+
 class Thompson:
     '''Objecto interno para construccion de AFN por Thompson
 
@@ -18,8 +19,8 @@ class Thompson:
         actualState = self.STATE_NAME
         self.STATE_NAME += 1
         return actualState
-        
-    def _concat(self, left:AFN, right:AFN) -> AFN:
+
+    def _concat(self, left: AFN, right: AFN) -> AFN:
         '''Implementacion de concatenacion de AFN's '''
         # Estado inicial y final
         initial = left.initial
@@ -44,7 +45,7 @@ class Thompson:
         transitions.update(right.transitions)
         return AFN(estados, symbols, initial, final, transitions)
 
-    def _basicAFN(self, symbol:str) -> AFN:
+    def _basicAFN(self, symbol: str) -> AFN:
         '''Paso base de AFNs segun thomson'''
         state_1 = self._getStateName()
         state_2 = self._getStateName()
@@ -56,7 +57,7 @@ class Thompson:
             transitions={(state_1, symbol): [state_2]},
         )
 
-    def _copyAFN(self, afn:AFN) -> AFN:
+    def _copyAFN(self, afn: AFN) -> AFN:
         '''Copia un AFN, agrega nuevos nobres a los stados'''
         offset = self.STATE_NAME - min(afn.estados)
 
@@ -77,26 +78,25 @@ class Thompson:
 
         self.STATE_NAME = max(estados) + 1
 
-
         return AFN(estados, afn.symbols, initial, final, transitions)
 
-    def _thompson(self, root:Node) -> AFN:
+    def _thompson(self, root: Node) -> AFN:
         '''Implementacion de algorimto de Thompson'''
 
         # Paso base: Hoja del arbol
         if root.data in ALPHABET:
             return self._basicAFN(root.data)
 
-        right:AFN = None if root.right is None else self._thompson(root.right)
-        left:AFN = self._thompson(root.left)
+        right: AFN = None if root.right is None else self._thompson(root.right)
+        left: AFN = self._thompson(root.left)
 
         match root.data:
 
             # Si es un or
             case '|':
                 # Estado inicial y final
-                initial = self._getStateName()            
-                final = self._getStateName() 
+                initial = self._getStateName()
+                final = self._getStateName()
 
                 # Simbolos
                 symbols = left.symbols + right.symbols
@@ -136,7 +136,7 @@ class Thompson:
 
             # caso kleen +
             case '+':
-                copy:AFN = self._copyAFN(left)
+                copy: AFN = self._copyAFN(left)
 
                 # Estado inicial y final
                 initial = self._getStateName()
@@ -156,7 +156,7 @@ class Thompson:
 
                 kleen_AFN = AFN(estados, symbols, initial, final, transitions)
                 return self._concat(kleen_AFN, left)
-            
+
             # caso nullable
             case '?':
                 # Estado inicial y final
@@ -176,7 +176,8 @@ class Thompson:
 
         return AFN(estados, symbols, initial, final, transitions)
 
-def createAFN_thompson(arbol:SyntaxTree) -> AFN:
+
+def createAFN_thompson(arbol: SyntaxTree) -> AFN:
     '''Crea un AFN por Thompson a partir de un arbol de sintaxis'''
     t_instance = Thompson()
     return t_instance._thompson(arbol.root)
