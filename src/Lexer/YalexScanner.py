@@ -122,20 +122,16 @@ class YalexReader:
                 case '(*':
                     pass
 
-                case _:
-                    if not rulesFlag:
-                        continue
+                case '\n':
+                    pass
 
-                    if (
-                        (
-                            len(rulesLines) == 0
-                            or self._firstCHarInLine(line) == '|'
-                        ) and len(line) > 1
-                    ):
-                        rulesLines.append(list(line))
+                case _:
+                    print(
+                        f'Lexical Error: token "{prefix}" in yalex file not valid')
 
         # Procesamiento de token rules
         self._process_ruleTokens(rulesLines)
+
         # Generacion de regex unificada
         self.unifiedRegex = self._getFinalRegex()
         self.printFile()
