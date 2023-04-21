@@ -41,15 +41,15 @@ class Token:
 
     Atributos:
         name (rule): regex del token
-        regex (token): Nombre del token
+        regex (code): Codigo asignado a este token
     '''
 
     def __init__(self) -> None:
         self.rule: list = ''
-        self.token: list = ''
+        self.code: list = ''
 
     def __repr__(self) -> str:
-        return f'{self.token} = {self.rule}'
+        return f'{self.rule} = {self.code}'
 
 
 class YalexReader:
@@ -63,6 +63,27 @@ class YalexReader:
         alphabet (list[str]): alphabeto del archivo yalex (lenguaje)
         unifiedRegex (list[str|int]): regex unificade que representa las reglas de tokens
     '''
+
+    def _get_linePrefix(self, line: str) -> str:
+        splited = line.split(' ')
+        final_splited = []
+
+        for split in splited:
+            split = split.split('\t') if '\t' in split else [split]
+
+            for section in split:
+                if section != '':
+                    final_splited.append(section)
+
+        splited = final_splited
+        prefix = splited.pop(0)
+        line = ''
+
+        for split in splited:
+            line += split + ' '
+
+        line = line[:-2] if line[-2:] == '\n ' else line
+        return prefix, line
 
     def __init__(self, filename: str) -> None:
         # File Reading
@@ -79,12 +100,16 @@ class YalexReader:
         rulesFlag = False
 
         for line in lines:
-            prefix = line.split(' ')[0]
+            if rulesFlag:
+                rulesLines.append(line)
+                continue
+
+            prefix, line = self._get_linePrefix(line)
 
             match prefix:
                 # Manejo de definiciones regulares
                 case 'let':
-                    info = line[3:-1]
+                    info = line
                     new_def = self._getDefinition(info)
                     self.ogDefs.append([new_def.name, new_def.regex])
                     new_def.regex = self._process_regex(new_def.regex)
@@ -126,37 +151,88 @@ class YalexReader:
 
     def _process_ruleTokens(self, rulesLines) -> None:
         ''' Convierte los tokens a regex '''
+        rules_stream = []
 
-        for exp in rulesLines:
-            rule: Token = Token()
-            reading_def = True
-            token_readed = False
+        for line in rulesLines:
+            rules_stream = rules_stream + list(line)
 
-            while len(exp) > 0 and not token_readed:
-                actual = exp.pop(0)
+        actual_rule: Token = Token()
 
-                if actual == '|':
-                    continue
+        while len(rules_stream) > 0:
+            actual = rules_stream.pop(0)
 
-                if actual == ' ' and reading_def:
-                    continue
+            if actual in ['|', ' ', '\n', '\t']:
+                continue
 
-                if actual == '{':
-                    reading_def = False
-                    rule.rule = self._process_regex(rule.rule)
-                    continue
+            if actual == '{':
+                code_stream = []
+                actual = rules_stream.pop(0)
 
-                if not reading_def:
-                    if actual == '}':
-                        token_readed = True
-                        rule.token = self._process_token(rule.token)
-                        self.tokenRules.append(rule)
+                while actual != '}':
+                    code_stream.append(actual)
+                    actual = rules_stream.pop(0)
+
+                actual_rule.code = code_stream
+
+                if actual_rule.rule != '':
+                    self.tokenRules.append(actual_rule)
+                else:
+                    print('Lexical Error: rule has no token')
+
+                actual_rule = Token()
+                continue
+
+            if actual in ["'", '"']:
+                token_name = ['(']
+                actual = rules_stream.pop(0)
+
+                while actual not in ["'", '"']:
+                    symbol = ord(actual)
+
+                    if symbol not in self.alphabet:
+                        self.alphabet.append(symbol)
+
+                    token_name.append(symbol)
+                    actual = rules_stream.pop(0)
+
+                token_name.append(')')
+
+                if actual_rule.rule != '':
+                    print('Lexical Error: Bad definition of rule token')
+
+                actual_rule.rule = token_name
+                continue
+
+            if actual == '(' and rules_stream[0] == '*':
+                rules_stream.pop(0)
+
+                actual = rules_stream.pop(0)
+                lookAhead = rules_stream[0]
+                founded_closing = False
+
+                while not founded_closing:
+                    if actual == '*' and lookAhead == ')':
+                        founded_closing = True
+                        rules_stream.pop(0)
                         continue
 
-                    rule.token += actual
+                    actual = rules_stream.pop(0)
+                    lookAhead = rules_stream[0]
 
-                else:
-                    rule.rule += actual
+                continue
+
+            else:
+                token_name = [actual]
+                actual = rules_stream.pop(0)
+
+                while actual not in ['\t', ' ', '{']:
+                    token_name.append(actual)
+                    actual = rules_stream.pop(0)
+
+                if actual == '{':
+                    rules_stream.insert(0, actual)
+
+                actual_rule.rule = self._recursive_expresion(token_name)
 
     def _process_token(self, token: list) -> str:
         ''' Devuelve le nombre del token '''
@@ -167,6 +243,8 @@ class YalexReader:
 
     def _firstCHarInLine(self, line):
         ''' Devuelve el primer caracter en la linea de texto '''
+        if len(line) == 0:
+            return 0
         line = list(line)
         actual = line.pop(0)
 
@@ -476,9 +554,9 @@ class YalexReader:
 
         for token in self.tokenRules:
             string += '  -> '
-            string += transformPostfix(token.token)
-            string += ' = '
             string += transformPostfix(token.rule)
+            string += ' = '
+            string += '{' + ''.join(token.code) + '}'
             string += '\n'
 
         string += '\n---- Final Regex ----\n'
