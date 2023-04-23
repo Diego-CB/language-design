@@ -42,7 +42,7 @@ def ReadYalex(filepath: str) -> None:
     ''' Crea un AFD apor construccion directa '''
     # Lectura y procesamiento de Yalex
     reader: YalexReader = YalexReader(filename=filepath)
-    regex = reader.unifiedRegex
+    regex = reader.augmentedRegex
     alphabet = reader.alphabet
     # Conversion a POstfix
     regex_ = toPostfix(regex, alphabet=alphabet)
