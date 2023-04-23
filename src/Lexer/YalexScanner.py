@@ -45,11 +45,12 @@ class Token:
     '''
 
     def __init__(self) -> None:
+        self.name: str = ''
         self.rule: list = ''
         self.code: list = ''
 
     def __repr__(self) -> str:
-        return f'{self.rule} = {self.code}'
+        return f'{self.name} = {transformPostfix(self.rule)} -> {"{"}{transformPostfix(self.code)}{"}"}'
 
 
 class YalexReader:
@@ -157,7 +158,12 @@ class YalexReader:
         while len(rules_stream) > 0:
             actual = rules_stream.pop(0)
 
-            if actual in ['|', ' ', '\n', '\t']:
+            if actual == '|' or len(rules_stream) == 0:
+                self.tokenRules.append(actual_rule)
+                actual_rule = Token()
+                continue
+
+            if actual in [' ', '\n', '\t']:
                 continue
 
             if actual == '{':
@@ -169,34 +175,30 @@ class YalexReader:
                     actual = rules_stream.pop(0)
 
                 actual_rule.code = code_stream
-
-                if actual_rule.rule != '':
-                    self.tokenRules.append(actual_rule)
-                else:
-                    print('Lexical Error: rule has no token')
-
-                actual_rule = Token()
                 continue
 
             if actual in ["'", '"']:
-                token_name = ['(']
+                token_name = ''
+                token_rule = ['(']
                 actual = rules_stream.pop(0)
 
                 while actual not in ["'", '"']:
+                    token_name += actual
                     symbol = ord(actual)
 
                     if symbol not in self.alphabet:
                         self.alphabet.append(symbol)
 
-                    token_name.append(symbol)
+                    token_rule.append(symbol)
                     actual = rules_stream.pop(0)
 
-                token_name.append(')')
+                token_rule.append(')')
 
                 if actual_rule.rule != '':
                     print('Lexical Error: Bad definition of rule token')
 
-                actual_rule.rule = token_name
+                actual_rule.rule = token_rule
+                actual_rule.name = token_name
                 continue
 
             if actual == '(' and rules_stream[0] == '*':
@@ -215,20 +217,25 @@ class YalexReader:
                     actual = rules_stream.pop(0)
                     lookAhead = rules_stream[0]
 
+                if len(rules_stream) == 0:
+                    rules_stream.append(' ')
                 continue
 
             else:
-                token_name = [actual]
+                token_name = actual
+                token_rule = [actual]
                 actual = rules_stream.pop(0)
 
-                while actual not in ['\t', ' ', '{']:
-                    token_name.append(actual)
+                while actual not in ['\t', ' ', '{', '|']:
+                    token_name += actual
+                    token_rule.append(actual)
                     actual = rules_stream.pop(0)
 
                 if actual == '{':
                     rules_stream.insert(0, actual)
 
-                actual_rule.rule = self._recursive_expresion(token_name)
+                actual_rule.name = token_name
+                actual_rule.rule = self._recursive_expresion(token_rule)
 
     def _process_token(self, token: list) -> str:
         ''' Devuelve le nombre del token '''
@@ -549,10 +556,7 @@ class YalexReader:
         string += '\n---- Rules ----\n'
 
         for token in self.tokenRules:
-            string += '  -> '
-            string += transformPostfix(token.rule)
-            string += ' = '
-            string += '{' + ''.join(token.code) + '}'
+            string += token.__repr__()
             string += '\n'
 
         string += '\n---- Final Regex ----\n'
