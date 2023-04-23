@@ -83,7 +83,11 @@ class YalexReader:
         for split in splited:
             line += split + ' '
 
-        line = line[:-2] if line[-2:] == '\n ' else line
+        if len(line) > 0:
+            line = line[:-2] if line[-2:] == '\n ' else line
+            line = line[:-1] if line[-1:] == '\n' else line
+            line = line[:-1] if line[-1] == ' ' else line
+
         return prefix, line
 
     def __init__(self, filename: str) -> None:
@@ -135,6 +139,7 @@ class YalexReader:
 
         # Generacion de regex unificada
         self.unifiedRegex = self._getFinalRegex()
+        self.augmentedRegex = self._getaugmentedRegex()
         self.printFile()
 
     def _getFinalRegex(self) -> str:
@@ -145,6 +150,19 @@ class YalexReader:
             expresions.append(token.rule)
 
         return self._toRegexOr(expresions)
+
+    def _getaugmentedRegex(self) -> str:
+        ''' Genera regex unificada en base a self.tokenRules con separadores # '''
+        expresions = []
+        self.token_names = []
+        self.alphabet.append(ord('#'))
+
+        for token in self.tokenRules:
+            expresions = expresions + token.rule
+            expresions.append(ord('#'))
+            self.token_names.append(token.name)
+
+        return expresions
 
     def _process_ruleTokens(self, rulesLines) -> None:
         ''' Convierte los tokens a regex '''
@@ -340,6 +358,9 @@ class YalexReader:
             actual = ord(regex.pop(0))
 
             # Referencias a definiciones pasadas
+            if actual == ord(' '):
+                continue
+
             if actual in starters:
                 posible_defs = []
 
@@ -355,6 +376,9 @@ class YalexReader:
                     actual = ord(regex.pop(0))
                     lookAhead = ord(regex[0]) if len(regex) > 0 else None
                     not_defs = []
+
+                    if actual == ord(' '):
+                        continue
 
                     for def_ in posible_defs:
                         if actual != def_[char_count]:
@@ -562,6 +586,15 @@ class YalexReader:
         string += '\n---- Final Regex ----\n'
         string += transformPostfix(self.unifiedRegex)
         string += '\n'
+
+        string += '\n---- Augmented regex ----\n'
+        string += transformPostfix(self.augmentedRegex)
+        string += '\n'
+
+        string += '\n---- token Names ----\n'
+        for token in self.tokenRules:
+            string += '  -> ' + token.name
+            string += '\n'
 
         return string
 
