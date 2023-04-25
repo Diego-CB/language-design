@@ -56,7 +56,7 @@
 3. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
     > Ejemplo: py Scanner.py *./Examples/input/ejemplo.txt*
 
-4. Se desplegará el listado de **Tokens** y/o **Errores Lexicos** encontrados en el archivo *input*
+4. Se desplegará el listado de ***Tokens*** y/o ***Errores Lexicos*** encontrados en el archivo *input*
 
 ## 🤓 Autor
 
