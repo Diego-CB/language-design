@@ -1,5 +1,5 @@
 from .Lexer import *
-from .postfix import toPostfix
+from .postfix import toPostfix, processAugmented
 
 
 def createAFN(r: str) -> AFN:
@@ -44,8 +44,9 @@ def ReadYalex(filepath: str) -> None:
     reader: YalexReader = YalexReader(filename=filepath)
     regex = reader.augmentedRegex
     alphabet = reader.alphabet
-    # Conversion a POstfix
+    # Conversion a Postfix
     regex_ = toPostfix(regex, alphabet=alphabet)
+    regex_toTree = processAugmented(regex_, reader.token_names)
 
     # Impresion de postfix en archivo 'steps.txt'
     print_regex = transformPostfix(regex_)
@@ -55,5 +56,5 @@ def ReadYalex(filepath: str) -> None:
     f.close()
 
     # Creacion e impresion de arbol de expresion
-    r_tree = SyntaxTree(regex_)
+    r_tree = SyntaxTree(regex_toTree)
     r_tree.showTree()

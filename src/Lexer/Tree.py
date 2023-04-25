@@ -34,6 +34,8 @@ class Node:
         self.position: int = None
         self.printId: int = None
         self.followPos: list = []
+        self.token: str = None
+        # TODO implementar tokens en nodos terminales de nodos con #
 
 
 class SyntaxTree:
