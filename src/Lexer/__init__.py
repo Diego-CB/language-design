@@ -6,3 +6,4 @@ from .Min import min_AFD
 from .Automata import *
 from .YalexScanner import *
 from .util import transformPostfix
+from .WriteScanner import writeSCanner

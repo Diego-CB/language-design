@@ -249,17 +249,6 @@ class Augmented_AFD(AFD):
         super().__init__(estados, symbols, initial, finals, transitions)
         self.token_map = token_map
 
-    def simulate(self, c: str) -> bool:
-        S: int = self.initial
-
-        for char in c:
-            next_state = self.move(S, char)
-            if next_state is None:
-                return False
-            S = next_state
-
-        return (S in self.finals)
-
     def simulate_lexer(self, stream: list[int]) -> list[tuple[str]]:
         S: int = self.initial
         tokens: list = []
