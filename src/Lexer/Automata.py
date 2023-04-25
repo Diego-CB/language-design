@@ -78,18 +78,16 @@ class AFN(Automata):
         - initial (int): Estado inicial del automata
         - transitions (dict): transiciones del automata
         - final (int): estado de aceptacion del automata
-
-    Metodos:
-        - 
     '''
 
-    def __init__(self,
-                 estados: list,
-                 symbols: list,
-                 initial: int,
-                 final: int,
-                 transitions: dict
-                 ) -> None:
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        final: int,
+        transitions: dict
+    ) -> None:
         super().__init__()
         self.final = final
         self.estados: list = estados
@@ -201,6 +199,7 @@ class AFD(Automata):
                 return False
             S = next_state
 
+        self.actual_state = S
         return (S in self.finals)
 
     def drawAutomata(self, filename):
@@ -249,6 +248,49 @@ class Augmented_AFD(AFD):
     ) -> None:
         super().__init__(estados, symbols, initial, finals, transitions)
         self.token_map = token_map
+
+    def simulate(self, c: str) -> bool:
+        S: int = self.initial
+
+        for char in c:
+            next_state = self.move(S, char)
+            if next_state is None:
+                return False
+            S = next_state
+
+        return (S in self.finals)
+
+    def simulate_lexer(self, stream: list[int]) -> list[tuple[str]]:
+        S: int = self.initial
+        tokens: list = []
+        readed_stream = []
+
+        while len(stream) > 0:
+            char = stream.pop(0)
+            next_state = self.move(S, char)
+            readed_stream.append(ascii_to_char(char))
+
+            if next_state is None:
+                readed_stream = ''.join(readed_stream[:-1])
+
+                if S in self.finals:
+                    token = self.token_map[S]
+                    token_founded = (token, readed_stream)
+                    tokens.append(token_founded)
+
+                else:
+                    print(
+                        'Lexical ERROR: token "{}" not recognized by the languaje'
+                        .format(readed_stream)
+                    )
+
+                readed_stream = []
+                stream.insert(0, char)
+                next_state = self.initial
+
+            S = next_state
+
+        return tokens
 
     def __repr__(self) -> str:
         return super().__repr__() + f'''
