@@ -43,20 +43,21 @@
 
 ## 🕹️ Getting Started
 
-- Ejecute el archivo `main.py` escribiendo como argumento el path al archivo yalex a leer.
+1. Instale las dependencias del projecto ejecutando `pip install -r requirements.txt`
+2. Ejecute el archivo `main.py` escribiendo como argumento el path al archivo yalex a leer.
     > Ejemplo: py main.py *Archivo.yal*
 
-1. Se crearan varias carpetas `__pycache__` con compilados del codigo.
-2. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
+3. Se crearan varias carpetas `__pycache__` con compilados del codigo.
+4. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
      - `./out/steps.txt`
      - `./out/tree.txt`
      - `./out/AFD.png`
      - `./Scanner.py`
 
-3. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
+5. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
     > Ejemplo: py Scanner.py *./Examples/input/ejemplo.txt*
 
-4. Se desplegará el listado de ***Tokens*** y/o ***Errores Lexicos*** encontrados en el archivo *input*
+6. Se desplegará el listado de ***Tokens*** y/o ***Errores Lexicos*** encontrados en el archivo *input*
 
 ## 🤓 Autor
 
