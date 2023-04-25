@@ -76,11 +76,8 @@ def directCons(Stree: SyntaxTree) -> AFD:
                 if obj not in finals:
                     finals.append(obj)
 
-                if obj not in tokenMap.keys():
-                    tokenMap[obj] = []
-
                 token = tree.token_map[index]
-                tokenMap[obj].append(token)
+                tokenMap[obj] = token
                 break
 
     symbols.remove('#')

@@ -41,11 +41,11 @@ if __name__ == '__main__':
     tokens = afd.simulate_lexer(stream)
 
     for token in tokens:
-        print(token)
+        print(token[0], '->', token[1])
 '''
 
 
-def writeSCanner(afd: Augmented_AFD, path: str = './out/Scanner.py') -> str:
+def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
     source: list = ['from abc import ABC, abstractmethod\n']
     source = source + it.getsourcelines(Automata)[0]
     source = source + it.getsourcelines(AFD)[0]
