@@ -443,7 +443,22 @@ class YalexReader:
                 expresions = []
 
                 # Se utiliza del ASCII 32 al 126
-                for ascii in range(32, 127):
+                for ascii in range(48, 58):
+                    expresions.append(ascii)
+                    if ascii not in self.alphabet:
+                        self.alphabet.append(ascii)
+
+                for ascii in range(65, 91):
+                    expresions.append(ascii)
+                    if ascii not in self.alphabet:
+                        self.alphabet.append(ascii)
+
+                for ascii in range(97, 123):
+                    expresions.append(ascii)
+                    if ascii not in self.alphabet:
+                        self.alphabet.append(ascii)
+
+                for ascii in range(95, 96):
                     expresions.append(ascii)
                     if ascii not in self.alphabet:
                         self.alphabet.append(ascii)
