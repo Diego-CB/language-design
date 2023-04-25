@@ -47,14 +47,13 @@
     > Ejemplo: py main.py <<Archivo.yal>>
 
 1. Se crearan varias carpetas `__pycache__` con compilados del codigo.
-2. Se crearan dos archivos:
+2. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
   - `./out/steps.txt`
   - `./out/tree.txt`
   - `./out/AFD.png`
   - `./out/Scanner.py`
-  con el autput de la lectura del archivo YALex.
 
-- Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
+3. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
     > Ejemplo: py Scanner.py <<./Examples/input/ejemplo.txt>>
 
 ## 🤓 Autor
