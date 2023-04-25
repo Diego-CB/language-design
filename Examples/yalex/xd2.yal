@@ -1,0 +1,13 @@
+(* Lexer para Gramática No. 4 *)
+
+(* Introducir cualquier header aqui *)
+
+let delim = [' ''\t''\n']
+let ws = delim+
+let str = (a)+
+
+rule tokens = 
+    ws
+  | str    { return NUMBER }
+
+(* Introducir cualquier trailer aqui *)

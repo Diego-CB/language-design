@@ -15,6 +15,28 @@ import graphviz
 import os
 
 
+def ascii_to_char(ascii: int) -> str:
+    ''' Transforma un ASCII a char '''
+    char = chr(ascii)
+
+    if char == '\n':
+        char = '/n'
+
+    elif char == '\t':
+        char = '/t'
+
+    elif char == '\r':
+        char = '/r'
+
+    elif char == '\\':
+        char = '/'
+
+    elif char == ' ':
+        char = "' '"
+
+    return char
+
+
 class Automata(ABC):
     '''Objeto Automata (abstracto)
 
@@ -62,18 +84,16 @@ class AFN(Automata):
         - initial (int): Estado inicial del automata
         - transitions (dict): transiciones del automata
         - final (int): estado de aceptacion del automata
-
-    Metodos:
-        - 
     '''
 
-    def __init__(self,
-                 estados: list,
-                 symbols: list,
-                 initial: int,
-                 final: int,
-                 transitions: dict
-                 ) -> None:
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        final: int,
+        transitions: dict
+    ) -> None:
         super().__init__()
         self.final = final
         self.estados: list = estados
@@ -134,7 +154,7 @@ class AFN(Automata):
         # add edges to the graph
         for k in self.transitions.keys():
             start = f'q{k[0]}'
-            symbol = k[1]
+            symbol = ascii_to_char(k[1])
 
             for finish in self.transitions[k]:
                 graph.edge(start, f'q{finish}', label=symbol)
@@ -161,13 +181,14 @@ class AFD(Automata):
         - finals (list): estados de aceptacion del automata
     '''
 
-    def __init__(self,
-                 estados: list,
-                 symbols: list,
-                 initial: int,
-                 finals: list,
-                 transitions: dict
-                 ) -> None:
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        finals: list,
+        transitions: dict
+    ) -> None:
         super().__init__()
         self.finals: list = finals
         self.estados: list = estados
@@ -184,6 +205,7 @@ class AFD(Automata):
                 return False
             S = next_state
 
+        self.actual_state = S
         return (S in self.finals)
 
     def drawAutomata(self, filename):
@@ -205,16 +227,71 @@ class AFD(Automata):
         # add edges to the graph
         for k in self.transitions.keys():
             start = f'q{k[0]}'
-            symbol = k[1]
+            symbol = ascii_to_char(k[1])
             finish = self.transitions[k]
             graph.edge(start, f'q{finish}', label=symbol)
 
         # render the graph
-        path = './Renders/' + filename
+        path = './out/' + filename
         graph.render(filename=path, format='png')
         os.remove(path)
 
     def __repr__(self) -> str:
         return super().__repr__() + f'''
         Finals: {self.finals}
+        '''
+
+
+class Augmented_AFD(AFD):
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        finals: list,
+        transitions: dict,
+        token_map: dict
+    ) -> None:
+        super().__init__(estados, symbols, initial, finals, transitions)
+        self.token_map = token_map
+
+    def simulate_lexer(self, stream: list[int]) -> list[tuple[str]]:
+        S: int = self.initial
+        tokens: list = []
+        readed_stream = []
+
+        while len(stream) > 0:
+            char = stream.pop(0)
+            next_state = self.move(S, char)
+            readed_stream.append(ascii_to_char(char))
+
+            if next_state is None:
+
+                if S in self.finals:
+                    readed_stream = \
+                        ''.join(readed_stream[:-1]) if len(readed_stream) > 1\
+                        else readed_stream[0]
+
+                    token = self.token_map[S]
+                    token_founded = (token, readed_stream)
+                    tokens.append(token_founded)
+                    stream.insert(0, char)
+
+                else:
+                    readed_stream = readed_stream[0]
+                    tokens.append((
+                        'Lexical ERROR: token not recognized by the languaje',
+                        readed_stream
+                    ))
+
+                readed_stream = []
+                next_state = self.initial
+
+            S = next_state
+
+        return tokens
+
+    def __repr__(self) -> str:
+        return super().__repr__() + f'''
+        Tokens: {self.token_map}
         '''

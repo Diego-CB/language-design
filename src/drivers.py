@@ -1,5 +1,5 @@
 from .Lexer import *
-from .postfix import toPostfix
+from .postfix import toPostfix, processAugmented
 
 
 def createAFN(r: str) -> AFN:
@@ -42,10 +42,11 @@ def ReadYalex(filepath: str) -> None:
     ''' Crea un AFD apor construccion directa '''
     # Lectura y procesamiento de Yalex
     reader: YalexReader = YalexReader(filename=filepath)
-    regex = reader.unifiedRegex
+    regex = reader.augmentedRegex
     alphabet = reader.alphabet
-    # Conversion a POstfix
+    # Conversion a Postfix
     regex_ = toPostfix(regex, alphabet=alphabet)
+    regex_toTree = processAugmented(regex_, reader.token_names)
 
     # Impresion de postfix en archivo 'steps.txt'
     print_regex = transformPostfix(regex_)
@@ -55,5 +56,19 @@ def ReadYalex(filepath: str) -> None:
     f.close()
 
     # Creacion e impresion de arbol de expresion
-    r_tree = SyntaxTree(regex_)
+    r_tree = SyntaxTree(regex_toTree, reader.token_names, alphabet)
     r_tree.showTree()
+
+    # Creacion de AFD
+    afd = directCons(r_tree)
+    afd.drawAutomata(filename='AFD')
+
+    # Impresion de AFD en archivo 'steps.txt'
+    afd_toString = '\n\n---- AFD ----\n'
+    afd_toString += afd.__repr__() + '\n'
+    f = open('./out/steps.txt', 'a')
+    f.write(afd_toString)
+    f.close()
+
+    # Escritura de Scanner
+    writeSCanner(afd)

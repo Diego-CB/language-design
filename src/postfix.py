@@ -12,6 +12,7 @@ Autor: Diego Cordova - 20212
 '''
 
 from .alfabeto import ALPHABET, OPERATORS
+from copy import copy as cp
 
 _ORDER = {
     '*': 3,
@@ -118,10 +119,22 @@ def _postProcess(regex: list) -> list:
     return out
 
 
+def processAugmented(regex: list[int | str], token_Names: list[str]) -> list[int | str | list]:
+    postfix = cp(regex)
+    token_index = 0
+
+    while postfix.count('#') > 0:
+        insert_index = postfix.index('#')
+        postfix[insert_index] = ['#', token_index]
+        token_index += 1
+
+    return postfix
+
+
 def toPostfix(regex: str | list, augmented=False, alphabet=ALPHABET) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
     regex = list(regex) if type(regex) == str else regex
     _checkParen(regex)
     regex = regex if '.' in regex else _preprocess(regex, alphabet)
-    regex = _shunting(regex, alphabet) + (['#', '.'] if augmented else [])
+    regex = _shunting(regex, alphabet)
     return _postProcess(regex)

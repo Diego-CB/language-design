@@ -1,4 +1,4 @@
-# Lab C: Yalex
+# Lab D: Lexer
 
 ## 📡 Tecnologias Utilizadas
 
@@ -7,19 +7,19 @@
 
 ## ✅ Rúbrica
 
-- [x] Correcta interpretación de Expresiones Regulares en Definición Regular.
-- [x] Generación de Árbol de Expresión, representando cada Expresión Regular dentro de la Definición Regular.
-- [x] Generación de un único árbol de Expresión.
+- [x] Procesamiento de Archivo de Entrada [identificación de errores].
+- [x] Generación y correcta compilación [interpretación] de Analizador Léxico.
+- [x] Generación de Scanner e identificación de Tokens [ 4 archivos .yal].
 
 ## 🗃️ Estructura de Archivos
 
-- **`src`**
+- ***`src`***
 
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
   - `drivers.py`: implemetaciones de pipelines (API)
 
-  - **`Lexer`**
+  - ***`Lexer`***
     - `util.py`: funcinones auxiliares
     - `Tree.py`: Implementación de arbol de sintaxis y followpos.
     - `Automata.py`: Objectos Automatas y funcionalidades de los mismos
@@ -29,21 +29,34 @@
     - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
     - `YalexScanner.py`: Lectura de archivos .yal
 
-- **`out`**: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
+- ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
   - `stepts.txt`: Descripcion del proceso de lectura YAlex
   - `Tree.png`: Arbol de expresion resultante
+  - `AFD.png`: Grafo de AFD resultante para el Lexer.
+  - `Scanner.py`: Código del
 
-- **`Examples`**: Dentro de esta carpeta se encuentran ejemplos de archivos yalex.
+- ***`Examples`***: 
+  - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
+  - ***`yalex`***: Ejemplos de archivos yalex para lectura.
 
 - `main.py`: Programa principal (Driver Program).
 
 ## 🕹️ Getting Started
 
 - Ejecute el archivo `main.py` escribiendo como argumento el path al archivo yalex a leer.
-    > Ejemplo: py main.py <<Archivo.yal>>
+    > Ejemplo: py main.py *Archivo.yal*
 
 1. Se crearan varias carpetas `__pycache__` con compilados del codigo.
-2. Se crearan dos archivos `./out/steps.txt` y `./out/tree.txt` con el autput de la lectura del archivo YALex.
+2. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
+     - `./out/steps.txt`
+     - `./out/tree.txt`
+     - `./out/AFD.png`
+     - `./Scanner.py`
+
+3. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
+    > Ejemplo: py Scanner.py *./Examples/input/ejemplo.txt*
+
+4. Se desplegará el listado de ***Tokens*** y/o ***Errores Lexicos*** encontrados en el archivo *input*
 
 ## 🤓 Autor
 

@@ -76,13 +76,18 @@ class SyntaxTree:
         self.set_pid(0)
 
     # Constructor
-    def __init__(self, postfix: list) -> None:
+    def __init__(self, postfix: list, token_names: list, alphabet: list = ALPHABET) -> None:
         '''Crea un arbol de sintaxis a partir de una regex en postfix'''
         self.nodes = None
         self.edges = None
         self.root = Node()
         self.symbols: list = []
         self.symbolMap: dict = {}
+        self.final_index = []
+        self.token_map = {}
+        self.token_names = token_names
+        self.alphabet = alphabet
+
         # self.regex = ''.join(postfix)
         self._fillTree(self.root, postfix)
         self.reset_pid()
@@ -99,18 +104,26 @@ class SyntaxTree:
 
         # position (si es symbolo del alfabeto)
         if (
-            (actualNode.data == '#' or actualNode.data in ALPHABET)
+            (actualNode.data in self.alphabet or type(actualNode.data) == list)
             and actualNode.data != '^'
         ):
-            if actualNode.data not in self.symbols:
+            if type(actualNode.data) != list and actualNode.data not in self.symbols:
                 self.symbols.append(actualNode.data)
 
             actual_i = self.get_i()
-            if actualNode.data == '#':
-                self.final_index = actual_i
             self.symbolMap[actual_i] = actualNode.data
             actualNode.position = actual_i
             self.set_i(actual_i + 1)
+
+            # Logica para multiples '#'
+            if type(actualNode.data) == list:
+                self.final_index.append(actual_i)
+                self.token_map[actual_i] = self.token_names[actualNode.data[1]]
+                actualNode.data = '#'
+                self.symbolMap[actual_i] = actualNode.data
+
+                if '#' not in self.symbols:
+                    self.symbols.append('#')
 
         # Si la operacion no tiene operadores
         if actualNode.data in OPERATORS and len(postfix) == 0:
@@ -340,8 +353,8 @@ class SyntaxTree:
 
         elif root in ['*', '+']:
             '''
-            En caso sea algun operador unario:
-            Se le agrega el firstpos del nodo al lastpos del nodo
+            En caso sea una cerradura:
+            Se le agrega el firstpos del nodo actual al lastpos del nodo actual
             '''
             last: list[Node] = self._lastpos(n)
             first: list[Node] = self._firstpos(n)
@@ -349,6 +362,13 @@ class SyntaxTree:
             for node in last:
                 node.followPos = node.followPos + first
 
+            self._followpos(n.left)
+
+        elif root == '?':
+            '''
+            En caso es nulable:
+            Se sigue con la recursion
+            '''
             self._followpos(n.left)
 
         elif root == '|':

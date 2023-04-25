@@ -10,7 +10,7 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from .Automata import AFD
+from .Automata import AFD, Augmented_AFD
 
 
 class SubState:
@@ -47,8 +47,9 @@ def enumStates(
     symbols: list,
     initial: SubState,
     finals: list[SubState],
-    transitions: dict
-) -> AFD:
+    transitions: dict,
+    token_map: dict = None
+) -> AFD | Augmented_AFD:
     '''
         Devuelve un AFD con estados como numeros
         utilzando como base estados de SubStates (objetos)        
@@ -63,6 +64,8 @@ def enumStates(
             Estados finales
         :param transitions: dict
             Transiciones
+        :param token_map: dict
+            Tokens de estados finales
     '''
 
     # Llave para transformar estados de objeto a numeros
@@ -84,12 +87,29 @@ def enumStates(
     actual_initial = states_dict[initial]
     actual_finals = [states_dict[q] for q in finals]
 
-    return AFD(
+    if token_map is None:
+        return AFD(
+            estados=actual_states,
+            symbols=symbols,
+            initial=actual_initial,
+            finals=actual_finals,
+            transitions=actual_trans
+        )
+
+    # Token Handling
+    new_token_map: dict = {}
+    for substate in finals:
+        new_key = states_dict[substate]
+        new_value = token_map[substate]
+        new_token_map[new_key] = new_value
+
+    return Augmented_AFD(
         estados=actual_states,
         symbols=symbols,
         initial=actual_initial,
         finals=actual_finals,
-        transitions=actual_trans
+        transitions=actual_trans,
+        token_map=new_token_map
     )
 
 
