@@ -62,3 +62,4 @@ def ReadYalex(filepath: str) -> None:
     # Creacion de AFD
     afd = directCons(r_tree)
     afd.drawAutomata(filename='AFD')
+    print(afd)

@@ -20,10 +20,10 @@ def ascii_to_char(ascii: int) -> str:
     char = chr(ascii)
 
     if char == '\n':
-        char = '\\n'
+        char = '/n'
 
     elif char == '\t':
-        char = '\\t'
+        char = '/t'
 
     elif char == ' ':
         char = "' '"
@@ -234,4 +234,23 @@ class AFD(Automata):
     def __repr__(self) -> str:
         return super().__repr__() + f'''
         Finals: {self.finals}
+        '''
+
+
+class Augmented_AFD(AFD):
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        finals: list,
+        transitions: dict,
+        token_map: dict
+    ) -> None:
+        super().__init__(estados, symbols, initial, finals, transitions)
+        self.token_map = token_map
+
+    def __repr__(self) -> str:
+        return super().__repr__() + f'''
+        Tokens: {self.token_map}
         '''

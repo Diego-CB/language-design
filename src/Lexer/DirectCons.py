@@ -67,10 +67,20 @@ def directCons(Stree: SyntaxTree) -> AFD:
 
         S = get_unmarked(Dstates)
 
+    # Handle final states and tokens
+    tokenMap: dict = {}
     for obj in Dstates:
         for index in tree.final_index:
+
             if index in obj.states:
-                finals.append(obj)
+                if obj not in finals:
+                    finals.append(obj)
+
+                if obj not in tokenMap.keys():
+                    tokenMap[obj] = []
+
+                token = tree.token_map[index]
+                tokenMap[obj].append(token)
                 break
 
     return enumStates(
@@ -78,5 +88,6 @@ def directCons(Stree: SyntaxTree) -> AFD:
         symbols=symbols,
         initial=initial,
         finals=finals,
-        transitions=transitions
+        transitions=transitions,
+        token_map=tokenMap
     )
