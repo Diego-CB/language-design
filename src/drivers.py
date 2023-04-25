@@ -38,7 +38,7 @@ def minimizeAFD(afd: AFD, dir: bool) -> AFD:
     return afd
 
 
-def ReadYalex(filepath: str) -> None:
+def ReadYalex(filepath: str) -> Augmented_AFD:
     ''' Crea un AFD apor construccion directa '''
     # Lectura y procesamiento de Yalex
     reader: YalexReader = YalexReader(filename=filepath)
@@ -62,4 +62,4 @@ def ReadYalex(filepath: str) -> None:
     # Creacion de AFD
     afd = directCons(r_tree)
     afd.drawAutomata(filename='AFD')
-    print(afd)
+    return afd

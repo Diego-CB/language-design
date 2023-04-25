@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # filepath = sys.argv[1]
 
     filepath = './Examples/yalex/xd2.yal'
-    ReadYalex(filepath=filepath)
+    afd = ReadYalex(filepath=filepath)
 
 # filepath = './Examples/slr-4.yal'
 # filepath = './Examples/slr-1.yal'
