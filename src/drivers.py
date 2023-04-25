@@ -56,5 +56,5 @@ def ReadYalex(filepath: str) -> None:
     f.close()
 
     # Creacion e impresion de arbol de expresion
-    r_tree = SyntaxTree(regex_toTree)
+    r_tree = SyntaxTree(regex_toTree, reader.token_names, alphabet)
     r_tree.showTree()
