@@ -25,6 +25,12 @@ def ascii_to_char(ascii: int) -> str:
     elif char == '\t':
         char = '/t'
 
+    elif char == '\r':
+        char = '/r'
+
+    elif char == '\\':
+        char = '/'
+
     elif char == ' ':
         char = "' '"
 

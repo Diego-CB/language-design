@@ -46,11 +46,7 @@ if __name__ == '__main__':
 
 
 def writeSCanner(afd: Augmented_AFD, path: str = './out/Scanner.py') -> str:
-    source: list = [
-        'from abc import ABC, abstractmethod\n',
-        'import graphviz\n',
-        'import os\n',
-    ]
+    source: list = ['from abc import ABC, abstractmethod\n']
     source = source + it.getsourcelines(Automata)[0]
     source = source + it.getsourcelines(AFD)[0]
     source = source + it.getsourcelines(Augmented_AFD)[0]

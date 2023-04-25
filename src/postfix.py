@@ -123,8 +123,8 @@ def processAugmented(regex: list[int | str], token_Names: list[str]) -> list[int
     postfix = cp(regex)
     token_index = 0
 
-    while postfix.count(ord('#')) > 0:
-        insert_index = postfix.index(ord('#'))
+    while postfix.count('#') > 0:
+        insert_index = postfix.index('#')
         postfix[insert_index] = ['#', token_index]
         token_index += 1
 

@@ -83,6 +83,8 @@ def directCons(Stree: SyntaxTree) -> AFD:
                 tokenMap[obj].append(token)
                 break
 
+    symbols.remove('#')
+
     return enumStates(
         estados=Dstates,
         symbols=symbols,

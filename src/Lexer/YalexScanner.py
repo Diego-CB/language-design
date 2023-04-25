@@ -155,12 +155,11 @@ class YalexReader:
         ''' Genera regex unificada en base a self.tokenRules con separadores # '''
         expresions = []
         self.token_names = []
-        ascii_separator = ord('#')
-        self.alphabet.append(ascii_separator)
+        self.alphabet.append('#')
 
         for token in self.tokenRules:
             augmentedRule = token.rule
-            augmentedRule.append(ascii_separator)
+            augmentedRule.append('#')
             expresions.append(augmentedRule)
             self.token_names.append(token.name)
 

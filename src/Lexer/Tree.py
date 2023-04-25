@@ -119,11 +119,11 @@ class SyntaxTree:
             if type(actualNode.data) == list:
                 self.final_index.append(actual_i)
                 self.token_map[actual_i] = self.token_names[actualNode.data[1]]
-                actualNode.data = ord('#')
+                actualNode.data = '#'
                 self.symbolMap[actual_i] = actualNode.data
 
-                if ord('#') not in self.symbols:
-                    self.symbols.append(ord('#'))
+                if '#' not in self.symbols:
+                    self.symbols.append('#')
 
         # Si la operacion no tiene operadores
         if actualNode.data in OPERATORS and len(postfix) == 0:
@@ -353,8 +353,8 @@ class SyntaxTree:
 
         elif root in ['*', '+']:
             '''
-            En caso sea algun operador unario:
-            Se le agrega el firstpos del nodo al lastpos del nodo
+            En caso sea una cerradura:
+            Se le agrega el firstpos del nodo actual al lastpos del nodo actual
             '''
             last: list[Node] = self._lastpos(n)
             first: list[Node] = self._firstpos(n)
@@ -362,6 +362,13 @@ class SyntaxTree:
             for node in last:
                 node.followPos = node.followPos + first
 
+            self._followpos(n.left)
+
+        elif root == '?':
+            '''
+            En caso es nulable:
+            Se sigue con la recursion
+            '''
             self._followpos(n.left)
 
         elif root == '|':
