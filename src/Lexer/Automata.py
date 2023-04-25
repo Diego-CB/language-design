@@ -15,6 +15,22 @@ import graphviz
 import os
 
 
+def ascii_to_char(ascii: int) -> str:
+    ''' Transforma un ASCII a char '''
+    char = chr(ascii)
+
+    if char == '\n':
+        char = '\\n'
+
+    elif char == '\t':
+        char = '\\t'
+
+    elif char == ' ':
+        char = "' '"
+
+    return char
+
+
 class Automata(ABC):
     '''Objeto Automata (abstracto)
 
@@ -134,7 +150,7 @@ class AFN(Automata):
         # add edges to the graph
         for k in self.transitions.keys():
             start = f'q{k[0]}'
-            symbol = k[1]
+            symbol = ascii_to_char(k[1])
 
             for finish in self.transitions[k]:
                 graph.edge(start, f'q{finish}', label=symbol)
@@ -161,13 +177,14 @@ class AFD(Automata):
         - finals (list): estados de aceptacion del automata
     '''
 
-    def __init__(self,
-                 estados: list,
-                 symbols: list,
-                 initial: int,
-                 finals: list,
-                 transitions: dict
-                 ) -> None:
+    def __init__(
+        self,
+        estados: list,
+        symbols: list,
+        initial: int,
+        finals: list,
+        transitions: dict
+    ) -> None:
         super().__init__()
         self.finals: list = finals
         self.estados: list = estados
@@ -205,12 +222,12 @@ class AFD(Automata):
         # add edges to the graph
         for k in self.transitions.keys():
             start = f'q{k[0]}'
-            symbol = k[1]
+            symbol = ascii_to_char(k[1])
             finish = self.transitions[k]
             graph.edge(start, f'q{finish}', label=symbol)
 
         # render the graph
-        path = './Renders/' + filename
+        path = './out/' + filename
         graph.render(filename=path, format='png')
         os.remove(path)
 

@@ -68,8 +68,10 @@ def directCons(Stree: SyntaxTree) -> AFD:
         S = get_unmarked(Dstates)
 
     for obj in Dstates:
-        if tree.final_index in obj.states:
-            finals.append(obj)
+        for index in tree.final_index:
+            if index in obj.states:
+                finals.append(obj)
+                break
 
     return enumStates(
         estados=Dstates,

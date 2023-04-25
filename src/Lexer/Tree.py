@@ -34,8 +34,6 @@ class Node:
         self.position: int = None
         self.printId: int = None
         self.followPos: list = []
-        self.token: str = None
-        # TODO implementar tokens en nodos terminales de nodos con #
 
 
 class SyntaxTree:
@@ -117,11 +115,15 @@ class SyntaxTree:
             actualNode.position = actual_i
             self.set_i(actual_i + 1)
 
+            # Logica para multiples '#'
             if type(actualNode.data) == list:
                 self.final_index.append(actual_i)
                 self.token_map[actual_i] = self.token_names[actualNode.data[1]]
                 actualNode.data = ord('#')
                 self.symbolMap[actual_i] = actualNode.data
+
+                if ord('#') not in self.symbols:
+                    self.symbols.append(ord('#'))
 
         # Si la operacion no tiene operadores
         if actualNode.data in OPERATORS and len(postfix) == 0:

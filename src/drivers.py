@@ -58,3 +58,7 @@ def ReadYalex(filepath: str) -> None:
     # Creacion e impresion de arbol de expresion
     r_tree = SyntaxTree(regex_toTree, reader.token_names, alphabet)
     r_tree.showTree()
+
+    # Creacion de AFD
+    afd = directCons(r_tree)
+    afd.drawAutomata(filename='AFD')
