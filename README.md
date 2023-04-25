@@ -8,8 +8,8 @@
 ## ✅ Rúbrica
 
 - [x] Procesamiento de Archivo de Entrada [identificación de errores].
-- [ ] Generación y correcta compilación [interpretación] de Analizador Léxico.
-- [ ] Generación de Scanner e identificación de Tokens [ 4 archivos .yal].
+- [x] Generación y correcta compilación [interpretación] de Analizador Léxico.
+- [x] Generación de Scanner e identificación de Tokens [ 4 archivos .yal].
 
 ## 🗃️ Estructura de Archivos
 
@@ -51,7 +51,7 @@
      - `./out/steps.txt`
      - `./out/tree.txt`
      - `./out/AFD.png`
-     - `./out/Scanner.py`
+     - `./Scanner.py`
 
 3. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
     > Ejemplo: py Scanner.py *./Examples/input/ejemplo.txt*

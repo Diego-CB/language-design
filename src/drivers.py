@@ -63,5 +63,12 @@ def ReadYalex(filepath: str) -> None:
     afd = directCons(r_tree)
     afd.drawAutomata(filename='AFD')
 
+    # Impresion de AFD en archivo 'steps.txt'
+    afd_toString = '\n\n---- AFD ----\n'
+    afd_toString += afd.__repr__() + '\n'
+    f = open('./out/steps.txt', 'a')
+    f.write(afd_toString)
+    f.close()
+
     # Escritura de Scanner
     writeSCanner(afd)
