@@ -8,3 +8,5 @@
    asd ass 1234567
    A #
    #
+
+if true then false

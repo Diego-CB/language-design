@@ -83,8 +83,8 @@ class YalexReader:
         for split in splited:
             line += split + ' '
 
-        if len(line) > 0:
-            line = line[:-2] if line[-2:] == '\n ' else line
+        if len(line) > 1:
+            line = line[:-2] if line[-2:] == '\\n ' else line
             line = line[:-1] if line[-1:] == '\n' else line
             line = line[:-1] if line[-1] == ' ' else line
 
