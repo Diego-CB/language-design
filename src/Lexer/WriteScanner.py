@@ -40,8 +40,13 @@ if __name__ == '__main__':
 
     tokens = afd.simulate_lexer(stream)
 
+    f = open("./out/tokens.txt", "w")
+    ws = '\\n'
     for token in tokens:
         print(token[0], '->', token[1])
+        f.write(str(token))
+        f.write(ws)
+    f.close()
 '''
 
 
