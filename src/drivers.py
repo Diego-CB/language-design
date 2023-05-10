@@ -1,5 +1,6 @@
 from .Lexer import *
 from .postfix import toPostfix, processAugmented
+from .Automata import *
 
 
 def createAFN(r: str) -> AFN:

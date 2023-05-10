@@ -1,5 +1,5 @@
 from .Tree import SyntaxTree, Node
-from .Automata import AFN
+from ..Automata import AFN
 from ..alfabeto import ALPHABET
 
 

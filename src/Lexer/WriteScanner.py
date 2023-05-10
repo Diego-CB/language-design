@@ -1,5 +1,5 @@
 import inspect as it
-from .Automata import *
+from ..Automata import *
 
 main_lines: str = '''
 def ascii_to_char(ascii: int) -> str:

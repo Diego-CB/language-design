@@ -1,4 +1,4 @@
-# Lab D: Lexer
+# Lab E: YAPar
 
 ## 📡 Tecnologias Utilizadas
 
@@ -7,9 +7,13 @@
 
 ## ✅ Rúbrica
 
-- [x] Procesamiento de Archivo de Entrada [identificación de errores].
-- [x] Generación y correcta compilación [interpretación] de Analizador Léxico.
-- [x] Generación de Scanner e identificación de Tokens [ 4 archivos .yal].
+- [ ] Correcta interpretación de un archivo de especificación YAPar.
+- [ ] Validación de tokens provistos en archivo de especificación de YAPar con el
+output generado por YALex.
+- [ ] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
+y CLOSURE.
+- [ ] Generación de elementos de nodos de autómata LR(0) y construcción del
+autómata LR(0).
 
 ## 🗃️ Estructura de Archivos
 
@@ -17,17 +21,19 @@
 
   - `alfabeto.py`: Definicion de alfabeto para regex.
   - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
+  - `Automata.py`: Objectos Automatas y funcionalidades de los mismos
   - `drivers.py`: implemetaciones de pipelines (API)
 
   - ***`Lexer`***
     - `util.py`: funcinones auxiliares
     - `Tree.py`: Implementación de arbol de sintaxis y followpos.
-    - `Automata.py`: Objectos Automatas y funcionalidades de los mismos
     - `Thompson.py`: Implementación de algoritmo de Thompson para construccion de AFN's.
     - `Subconjuntos.py`: Implementación de algoritmo de construccion de subconjuntos.
     - `DirectCons.py`: Implementación de algoritmo de construccion directa de AFD.
     - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
     - `YalexScanner.py`: Lectura de archivos .yal
+
+  - ***`Parser`***
 
 - ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
   - `stepts.txt`: Descripcion del proceso de lectura YAlex
@@ -38,6 +44,7 @@
 - ***`Examples`***: 
   - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
   - ***`yalex`***: Ejemplos de archivos yalex para lectura.
+  - ***`yapar`***: Ejemplos de archivos yapar para lectura.
 
 - `main.py`: Programa principal (Driver Program).
 
