@@ -1,0 +1,27 @@
+(* Yalex de especificaciones YAPar *)
+
+(* Introducir cualquier header aqui *)
+
+
+
+let delim = [' ''\t''\n']
+let ws = delim+
+
+let any = (_)*
+let comment = '/''*'any'*''/'
+
+let tokenName = (['A'-'Z'])*
+let token = '%''t''o''k''e''n'ws(tokenNamews)+
+
+let PName = (['a'-'z'])*
+let partProduction = ((tokenName|PName)delim)+
+let orProduction = partProductionws('|'delimpartProductionws)*
+let production = PName':'wspartProductionws('|'partProduction)*';'
+
+rule tokens = 
+    ws
+  | comment
+  | token
+  | production
+
+(* Introducir cualquier trailer aqui *)
