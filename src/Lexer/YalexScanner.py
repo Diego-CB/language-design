@@ -140,7 +140,7 @@ class YalexReader:
         # Generacion de regex unificada
         self.unifiedRegex = self._getFinalRegex()
         self.augmentedRegex = self._getaugmentedRegex()
-        self.printFile()
+        # self.printFile()
 
     def _getFinalRegex(self) -> str:
         ''' Genera regex unificada en base a self.tokenRules '''
@@ -442,23 +442,8 @@ class YalexReader:
             if actual == ord('_'):
                 expresions = []
 
-                # Se utiliza del ASCII 32 al 126
-                for ascii in range(48, 58):
-                    expresions.append(ascii)
-                    if ascii not in self.alphabet:
-                        self.alphabet.append(ascii)
-
-                for ascii in range(65, 91):
-                    expresions.append(ascii)
-                    if ascii not in self.alphabet:
-                        self.alphabet.append(ascii)
-
-                for ascii in range(97, 123):
-                    expresions.append(ascii)
-                    if ascii not in self.alphabet:
-                        self.alphabet.append(ascii)
-
-                for ascii in range(95, 96):
+                # Se utiliza del ASCII 32 al 200
+                for ascii in range(32, 200):
                     expresions.append(ascii)
                     if ascii not in self.alphabet:
                         self.alphabet.append(ascii)

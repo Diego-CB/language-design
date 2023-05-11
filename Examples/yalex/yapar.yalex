@@ -10,10 +10,10 @@ let ws = delim+
 let any = (_)*
 let comment = '/''*'any'*''/'
 
-let tokenName = (['A'-'Z'])*
+let tokenName = (['A'-'Z'])+
 let token = '%''t''o''k''e''n'ws(tokenNamews)+
 
-let PName = (['a'-'z'])*
+let PName = (['a'-'z'])+
 let partProduction = ((tokenName|PName)delim)+
 let orProduction = partProductionws('|'delimpartProductionws)*
 let production = PName':'wspartProductionws('|'partProduction)*';'

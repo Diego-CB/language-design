@@ -11,9 +11,6 @@ def ascii_to_char(ascii: int) -> str:
     elif char == '\\t':
         char = '/t'
 
-    elif char == ' ':
-        char = "' '"
-
     return char
 
 import sys
