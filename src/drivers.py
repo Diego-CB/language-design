@@ -64,5 +64,4 @@ def ReadYalex(filepath: str) -> None:
 def ReadYapar(filepath: str) -> None:
     tokens = read_tokens(filepath)
     tokens = [token for token in tokens if token[0] != '']
-    for token in tokens:
-        print(token)
+    processLines(tokens)
