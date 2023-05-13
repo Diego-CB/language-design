@@ -19,12 +19,11 @@ autómata LR(0).
 
 - ***`src`***
 
-  - `alfabeto.py`: Definicion de alfabeto para regex.
-  - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
   - `Automata.py`: Objectos Automatas y funcionalidades de los mismos
   - `drivers.py`: implemetaciones de pipelines (API)
 
   - ***`Lexer`***
+    - `postfix.py`: Implementación del algoritmo shunting yard para conversion de infix a postfix para regex.
     - `util.py`: funcinones auxiliares
     - `Tree.py`: Implementación de arbol de sintaxis y followpos.
     - `Thompson.py`: Implementación de algoritmo de Thompson para construccion de AFN's.
@@ -34,12 +33,12 @@ autómata LR(0).
     - `YalexScanner.py`: Lectura de archivos .yal
 
   - ***`Parser`***
+    - `YaparProcessor.py`: Procesa los tokens de los archivos yapar
+    - `YaparReader.py`: Lector de archivos *Yapl*
 
 - ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
-  - `stepts.txt`: Descripcion del proceso de lectura YAlex
-  - `Tree.png`: Arbol de expresion resultante
   - `AFD.png`: Grafo de AFD resultante para el Lexer.
-  - `Scanner.py`: Código del
+  - `tokens.txt`: Tokens leidos por le scanner
 
 - ***`Examples`***: 
   - ***`input`***: Ejemplos de archivos de entrada para el Scanner.

@@ -1,6 +1,5 @@
 from .Tree import SyntaxTree, Node
 from ..Automata import AFN
-from ..alfabeto import ALPHABET
 
 
 class Thompson:
@@ -80,11 +79,11 @@ class Thompson:
 
         return AFN(estados, afn.symbols, initial, final, transitions)
 
-    def _thompson(self, root: Node) -> AFN:
+    def _thompson(self, root: Node, alphabet) -> AFN:
         '''Implementacion de algorimto de Thompson'''
 
         # Paso base: Hoja del arbol
-        if root.data in ALPHABET:
+        if root.data in alphabet:
             return self._basicAFN(root.data)
 
         right: AFN = None if root.right is None else self._thompson(root.right)
