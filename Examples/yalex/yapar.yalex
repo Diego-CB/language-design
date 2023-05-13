@@ -16,7 +16,7 @@ let token = '%''t''o''k''e''n'ws(tokenNamews)+
 let PName = (['a'-'z'])+
 let partProduction = ((tokenName|PName)ws)+
 let orProduction = partProductionws('|'delimpartProduction)*
-let production = PName':'wspartProduction('|'delimpartProduction)*';'
+let production = PName':'wsorProduction';'
 
 rule tokens = 
     ws

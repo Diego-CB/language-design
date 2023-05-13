@@ -4,4 +4,4 @@ out/*
 run.ps1
 Examples/xd*
 .vscode
-Scanner.py
+/Scanner.py
