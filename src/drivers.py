@@ -1,6 +1,7 @@
 from .Lexer import *
 from .postfix import toPostfix, processAugmented
 from .Automata import *
+from .Parser import *
 
 
 def createAFN(r: str) -> AFN:
@@ -58,3 +59,10 @@ def ReadYalex(filepath: str) -> None:
 
     # Escritura de Scanner
     writeSCanner(afd)
+
+
+def ReadYapar(filepath: str) -> None:
+    tokens = read_tokens(filepath)
+    tokens = [token for token in tokens if token[0] != '']
+    for token in tokens:
+        print(token)

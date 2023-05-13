@@ -296,6 +296,22 @@ class Augmented_AFD(AFD):
 
             S = next_state
 
+        if S in self.finals:
+            readed_stream = readed_stream[:-1]\
+                if len(readed_stream) > 1\
+                else readed_stream[0]
+
+            token = self.token_map[S]
+            token_founded = [token, readed_stream]
+            tokens.append(token_founded)
+            stream.insert(0, char)
+
+        else:
+            tokens.append([
+                'Lexical ERROR: token not recognized by the languaje',
+                readed_stream + ' ' + str(ord(readed_stream[-1]))
+            ])
+
         return tokens
 
     def __repr__(self) -> str:

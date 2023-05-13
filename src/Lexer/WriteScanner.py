@@ -1,7 +1,7 @@
 import inspect as it
 from ..Automata import *
 
-main_lines: str = '''
+def_lines: str = '''
 def ascii_to_char(ascii: int) -> str:
     char = chr(ascii)
 
@@ -13,22 +13,16 @@ def ascii_to_char(ascii: int) -> str:
 
     return char
 
-import sys
+afd = Augmented_AFD(
+    estados={},
+    symbols={},
+    initial={},
+    finals={},
+    transitions={},
+    token_map={}
+)
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        raise Exception('Input File Missing for Lexical Analysis')
-
-    filepath = sys.argv[1]
-
-    afd = Augmented_AFD(
-        estados={},
-        symbols={},
-        initial={},
-        finals={},
-        transitions={},
-        token_map={}
-    )
+def read_tokens(filepath: str) -> list:
 
     file = open(filepath)
     stream = file.read()
@@ -40,10 +34,37 @@ if __name__ == '__main__':
     f = open("./out/tokens.txt", "w")
     ws = '\\n'
     for token in tokens:
-        print(token[0], '->', token[1])
         f.write(str(token))
         f.write(ws)
     f.close()
+    print('Token founded written in ./out.tokens.txt')
+    return tokens
+
+'''
+
+main_lines: str = '''
+import sys
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        raise Exception('Input File Missing for Lexical Analysis')
+
+    filepath = sys.argv[1]
+
+    file = open(filepath)
+    stream = file.read()
+    file.close()
+    stream = [ord(char) for char in stream]
+
+    tokens = afd.simulate_lexer(stream)
+
+    f = open("./out/tokens.txt", "w")
+    ws = '\\n'
+    for token in tokens:
+        f.write(str(token))
+        f.write(ws)
+    f.close()
+    print('Token founded written in ./out.tokens.txt')
 '''
 
 
@@ -62,7 +83,7 @@ def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
 
     source = ''.join(source)
 
-    main_lines_formated = main_lines.format(
+    def_lines_formated = def_lines.format(
         afd.estados,
         afd.symbols,
         afd.initial,
@@ -71,7 +92,8 @@ def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
         afd.token_map
     )
 
-    source += main_lines_formated
+    source += def_lines_formated
+    source += main_lines
 
     out_file = open(path, 'w')
     out_file.write(source)

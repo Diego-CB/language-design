@@ -14,14 +14,14 @@ let tokenName = (['A'-'Z'])+
 let token = '%''t''o''k''e''n'ws(tokenNamews)+
 
 let PName = (['a'-'z'])+
-let partProduction = ((tokenName|PName)delim)+
-let orProduction = partProductionws('|'delimpartProductionws)*
-let production = PName':'wspartProductionws('|'partProduction)*';'
+let partProduction = ((tokenName|PName)ws)+
+let orProduction = partProductionws('|'delimpartProduction)*
+let production = PName':'wspartProduction('|'delimpartProduction)*';'
 
 rule tokens = 
     ws
   | comment
-  | token
-  | production
+  | token { return TOKEN }
+  | production { return PRODUCTION }
 
 (* Introducir cualquier trailer aqui *)

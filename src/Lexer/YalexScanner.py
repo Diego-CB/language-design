@@ -161,7 +161,7 @@ class YalexReader:
             augmentedRule = token.rule
             augmentedRule.append('#')
             expresions.append(augmentedRule)
-            self.token_names.append(token.name)
+            self.token_names.append(token.code)
 
         return self._toRegexOr(expresions)
 
@@ -193,6 +193,9 @@ class YalexReader:
                     code_stream.append(actual)
                     actual = rules_stream.pop(0)
 
+                code_stream = ''.join(code_stream)
+                code_stream = code_stream.replace(' ', '')
+                code_stream = code_stream.replace('return', '')
                 actual_rule.code = code_stream
                 continue
 
