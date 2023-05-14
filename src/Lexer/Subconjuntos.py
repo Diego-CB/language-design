@@ -11,7 +11,7 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from ..Automata import AFN, AFD
+from .Automata import AFN, AFD
 from .util import *
 
 # ---- Funciones auxiliares ----

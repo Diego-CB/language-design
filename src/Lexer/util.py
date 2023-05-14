@@ -10,7 +10,7 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from ..Automata import AFD, Augmented_AFD
+from .Automata import AFD, Augmented_AFD
 
 
 class SubState:

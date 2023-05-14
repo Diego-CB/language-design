@@ -7,3 +7,4 @@ from .YalexScanner import *
 from .util import transformPostfix
 from .WriteScanner import writeSCanner
 from .postfix import toPostfix, processAugmented
+from .Automata import *
