@@ -1,4 +1,5 @@
 from copy import copy as cp
+from .util import Item
 
 
 def _process_token(line: str) -> list[str]:
@@ -27,6 +28,7 @@ def processLines(tokenLines: list[str]) -> None:
     tokens: list = []
     productions: dict = {}
 
+    # Process Tokens and productions
     for line in tokenLines:
         if line[0] == 'TOKEN':
             new_tokens = _process_token(line[1])
@@ -37,30 +39,39 @@ def processLines(tokenLines: list[str]) -> None:
             new_prod = _process_production(line[1])
             productions.update(new_prod)
 
-    print(tokens)
-    productions = _itemsfromProd(productions)
+    # Getting items out of productions
+    prod_list: list[Item] = _itemsfromProd(productions)
 
-    for p in productions.keys():
-        print(p, '->', productions[p])
+    # Getting augmented grammar
+    starting = prod_list[0].right[1]
+    start_item = Item('E\'', ['.', starting])
+    last_item = Item('E\'', [starting, '.'])
+    prod_list.append(last_item)
+    prod_list.append(start_item)
+
+    return prod_list
 
 
-def _itemsfromProd(prod: dict) -> dict:
-    new_items: dict = {}
+def _itemsfromProd(prod: dict) -> list[Item]:
+    new_items_list: list[Item] = []
+
     for k in prod.keys():
-        new_items[k] = _getitems(prod[k])
+        new_items = _getitems(prod[k])
 
-    return new_items
+        for item in new_items:
+            new_item = Item(k, item)
+            new_items_list.append(new_item)
+
+    return new_items_list
 
 
-def _getitems(prods):
+def _getitems(prods) -> list:
     new_prods = []
 
-    # TODO reemplazar insert con funcion custom que no reemplaze la data
-    #      sino la mueva para poner el "."
     for prod in prods:
-        for n in range(len(prod)):
+        for n in range(len(prod) + 1):
             og: list = cp(prod)
-            og.insert(n, '.')
+            og = og[:n] + ['.'] + og[n:] if n < len(og) else og + ['.']
             new_prods.append(og)
 
     return new_prods
