@@ -10,7 +10,7 @@
 - [x] Correcta interpretación de un archivo de especificación YAPar.
 - [x] Validación de tokens provistos en archivo de especificación de YAPar con el
 output generado por YALex.
-- [ ] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
+- [x] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
 y CLOSURE.
 - [x] Generación de elementos de nodos de autómata LR(0) y construcción del
 autómata LR(0).
@@ -41,34 +41,40 @@ autómata LR(0).
     - `LR_Constructor.py`: Construccion de Automata LR0
 
 - ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
-  - `AFD.png`: Grafo de AFD resultante para el Lexer.
-  - `LR0.png`: Grafo de AFD resultante para el Lexer.
-  - `tokens.txt`: Tokens leidos por le scanner
+      - `./out/AFD.png`: Con el AFD generado por el Yalex
+     - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
+     - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
+     - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
+     - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
 
-- ***`Examples`***: 
-  - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
-  - ***`yalex`***: Ejemplos de archivos yalex para lectura.
-  - ***`yapar`***: Ejemplos de archivos yapar para lectura.
+- ***`Examples`***: Ejemplos de ejecuciones para powershell de windows
+- ***`input`***: Ejemplos de archivos de entrada para el Scanner.
+- ***`yalex`***: Ejemplos de archivos yalex para lectura.
+- ***`yapar`***: Ejemplos de archivos yapar para lectura.
 
 - `main.py`: Programa principal (Driver Program).
 
 ## 🕹️ Getting Started
 
-1. Instale las dependencias del projecto ejecutando `pip install -r requirements.txt`
-2. Ejecute el archivo `main.py` escribiendo como argumento el path al archivo yalex a leer.
-    > Ejemplo: py main.py *Archivo.yal*
+1. Instale las **dependencias** del projecto ejecutando `pip install -r requirements.txt`
+2. Ejecute el archivo `main.py` escribiendo como argumentos:
+   1. El arhivo *YALex* con la definicíon del analizador lexico.
+   2. El arhivo *YAPar* con la definicíon del analizador sintactico.
+   3. Un archivo de entrada para ambos generadores.
+    > Ejemplo: py main.py *Archivo.yal* *Archivo.yalp* *Archivo.txt*
 
-3. Se crearan varias carpetas `__pycache__` con compilados del codigo.
-4. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
-     - `./out/steps.txt`
-     - `./out/tree.txt`
-     - `./out/AFD.png`
-     - `./Scanner.py`
+3. O ejecute alguno de los ejemplos predefinidos en la carpeta ***`Examples`***
+   > Ejemplo: *./Examples/1*
 
-5. Ejecute el archivo `Scanner.py` escribiendo como argumento el path al archivo *input* a leer.
-    > Ejemplo: py Scanner.py *./Examples/input/ejemplo.txt*
+4. Se crearan varias carpetas `__pycache__` con compilados del codigo.
+5. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
+     - `./out/AFD.png`: Con el AFD generado por el Yalex
+     - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
+     - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
+     - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
+     - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
 
-6. Se desplegará el listado de ***Tokens*** y/o ***Errores Lexicos*** encontrados en el archivo *input*
+6. En consola se imprimera una prueba del funcionamiento de las funciones ***FOLLOW*** y ***FIRST***
 
 ## 🤓 Autor
 

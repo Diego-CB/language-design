@@ -30,7 +30,7 @@ def ReadYalex(filepath: str) -> None:
 def ReadYapar(filepath: str, token_names: str) -> None:
     tokens_readed = read_tokens(filepath)
     tokens_readed = [token for token in tokens_readed if token[0] != '']
-    tokens, items = processLines(tokens_readed)
+    tokens, items, prods = processLines(tokens_readed)
 
     intersection = [item for item in tokens if item not in token_names]
 
@@ -39,6 +39,13 @@ def ReadYapar(filepath: str, token_names: str) -> None:
         raise Exception('Token in Yalex do not match the tokens in yalp')
 
     print('-> Tokens in Yalex match the tokens in yalp')
-    lr0: LR0 = make_LR0(items)
+    lr0: LR0 = make_LR0(items, prods)
     lr0.drawAutomata()
+
+    test_char = lr0.items_map[0][0].right[1]
+    first = lr0.first(test_char)
+    follow = lr0.follow(test_char)
+
+    print('first', test_char, ':', first)
+    print('follow', test_char, ':', follow)
     # print(lr0)

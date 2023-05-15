@@ -13,4 +13,4 @@ if __name__ == '__main__':
     ReadYapar(filepath=sys.argv[2], token_names=token_names)
 
     # tokenization of input file
-    os.system(f'py Scanner.py {sys.argv[3]}')
+    os.system(f'py ./out/Scanner.py {sys.argv[3]}')

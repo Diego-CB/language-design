@@ -83,7 +83,7 @@ def _I_in_C(I:list[Item], C: list[list[Item]]) -> int | bool:
     return None
 
 
-def make_LR0(items_arg: list[Item]) -> None:
+def make_LR0(items_arg: list[Item], prods: dict) -> None:
     global items
     items = items_arg
 
@@ -116,6 +116,7 @@ def make_LR0(items_arg: list[Item]) -> None:
                 # added_sets++
                 added_sets += 1
 
+
     final = None
     initial = 0
     estados = list(range(len(C)))
@@ -131,5 +132,6 @@ def make_LR0(items_arg: list[Item]) -> None:
         initial,
         final,
         transitions,
-        C
+        C,
+        prods
     )

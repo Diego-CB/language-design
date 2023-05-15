@@ -2,6 +2,7 @@ from ..Automata import Automata
 from .util import Item
 import graphviz
 import os
+from copy import copy as cp
 
 
 class LR0(Automata):
@@ -22,7 +23,8 @@ class LR0(Automata):
         initial: int,
         final: int,
         transitions: dict,
-        items_map: list[list[Item]]
+        items_map: list[list[Item]],
+        produtions: dict
     ) -> None:
         super().__init__()
         self.final: int = final
@@ -31,6 +33,8 @@ class LR0(Automata):
         self.initial: int = initial
         self.transitions: dict = transitions
         self.items_map: list[list[Item]] = items_map
+        self.productions: list[list[Item]] = produtions
+        self.startSymbol = 'E\''
 
     def drawAutomata(self, filename='LR0'):
         # create a new graph
@@ -66,6 +70,34 @@ class LR0(Automata):
         path = './out/' + filename
         graph.render(filename=path, format='png')
         os.remove(path)
+
+    def first(self, X: str) -> list[str]:
+        if X.lower() != X:
+            return [X]
+
+        first: list = []
+        for prod in self.productions[X]:
+            if prod[0] != X:
+                first = first + self.first(prod[0])
+
+        return first
+
+    def follow(self, X: str) -> list[str]:
+        folow = ['$'] if X == self.startSymbol else []
+
+        for k in self.productions.keys():
+            for item in self.productions[k]:
+                if X not in item:
+                    continue
+
+                item_index = item.index(X)
+
+                if item_index == len(item) - 1:
+                    continue
+
+                folow = folow + self.first(item[item_index + 1])
+
+        return folow
 
     def __repr__(self) -> str:
         string = ''
