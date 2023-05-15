@@ -52,6 +52,7 @@ autómata LR(0).
 - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
 - ***`yalex`***: Ejemplos de archivos yalex para lectura.
 - ***`yapar`***: Ejemplos de archivos yapar para lectura.
+- ***`Evidencia`***: Evidencia de la ejecucion del Lab E para los 4 archivos
 
 - `main.py`: Programa principal (Driver Program).
 
