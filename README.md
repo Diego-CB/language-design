@@ -41,11 +41,12 @@ autómata LR(0).
     - `LR_Constructor.py`: Construccion de Automata LR0
 
 - ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
-      - `./out/AFD.png`: Con el AFD generado por el Yalex
-     - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
-     - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
-     - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
-     - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
+
+  - `./out/AFD.png`: Con el AFD generado por el Yalex
+  - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
+  - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
+  - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
+  - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
 
 - ***`Examples`***: Ejemplos de ejecuciones para powershell de windows
 - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
