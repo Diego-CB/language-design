@@ -27,4 +27,5 @@ def ReadYapar(filepath: str) -> None:
     tokens = read_tokens(filepath)
     tokens = [token for token in tokens if token[0] != '']
     items = processLines(tokens)
+
     make_LR0(items)

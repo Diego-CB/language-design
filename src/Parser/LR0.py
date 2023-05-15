@@ -1,4 +1,5 @@
 from ..Automata import Automata
+from .util import Item
 import graphviz
 import os
 
@@ -19,15 +20,17 @@ class LR0(Automata):
         estados: list,
         symbols: list,
         initial: int,
-        finals: list,
-        transitions: dict
+        final: int,
+        transitions: dict,
+        items_map: list[list[Item]]
     ) -> None:
         super().__init__()
-        self.finals: list = finals
+        self.final: int = final
         self.estados: list = estados
         self.symbols: list = symbols
         self.initial: int = initial
         self.transitions: dict = transitions
+        self.items_map: list[list[Item]] = items_map
 
     def simulate(self, c: str) -> bool:
         S: int = self.initial

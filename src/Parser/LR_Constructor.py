@@ -1,5 +1,5 @@
 from .util import Item
-
+from .LR0 import LR0
 
 def _getSymbols():
     symbols = []
@@ -120,5 +120,3 @@ def make_LR0(items_arg: list[Item]) -> None:
 
     print('Initial: I', C.index(initial))
     print('Final: I', C.index(final))
-
-    
