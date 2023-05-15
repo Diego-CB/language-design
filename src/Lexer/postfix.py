@@ -11,8 +11,9 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from .alfabeto import ALPHABET, OPERATORS
 from copy import copy as cp
+
+OPERATORS = ['.', '|', '*', '?', '+']
 
 _ORDER = {
     '*': 3,
@@ -131,7 +132,7 @@ def processAugmented(regex: list[int | str], token_Names: list[str]) -> list[int
     return postfix
 
 
-def toPostfix(regex: str | list, augmented=False, alphabet=ALPHABET) -> list:
+def toPostfix(regex: str | list, alphabet, augmented=False) -> list:
     '''Devuelve la representacion en postfix de una regex en infix'''
     regex = list(regex) if type(regex) == str else regex
     _checkParen(regex)

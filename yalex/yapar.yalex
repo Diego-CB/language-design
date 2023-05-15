@@ -1,0 +1,27 @@
+(* Yalex de especificaciones YAPar *)
+
+(* Introducir cualquier header aqui *)
+
+
+
+let delim = [' ''\t''\n']
+let ws = delim+
+
+let any = (_)*
+let comment = '/''*'any'*''/'
+
+let tokenName = (['A'-'Z'])+
+let token = '%''t''o''k''e''n'ws(tokenNamews)+
+
+let PName = (['a'-'z'])+
+let simbol = (tokenName|PName)
+let partProduction = simbol(' 'simbol)*
+let secondP = ('\n'?' '*'|'' 'partProduction'\n')*
+let orProduction = partProduction'\n'secondP
+let production = PName':'wsorProduction';'
+
+rule tokens = 
+    ws
+  | comment
+  | token { return TOKEN }
+  | production { return PRODUCTION }

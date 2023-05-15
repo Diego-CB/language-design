@@ -1,41 +1,6 @@
 from .Lexer import *
-from .postfix import toPostfix, processAugmented
-
-
-def createAFN(r: str) -> AFN:
-    ''' Crea un AFN a partir de una regex '''
-    r_ = toPostfix(r)
-    r_tree = SyntaxTree(r_)
-    r_tree.showTree()
-    afn = createAFN_thompson(r_tree)
-    afn.drawAutomata()
-    return afn
-
-
-def AFN_to_AFD(afn: AFN) -> AFD:
-    ''' Crea un AFD por construccion de subconjuntos '''
-    afd = subconjuntos(afn)
-    afd.drawAutomata('AFD_SUB')
-    return afd
-
-
-def createAFD(r: str) -> AFD:
-    ''' Crea un AFD apor construccion directa '''
-    r_ = toPostfix(r, augmented=True)
-    r_tree = SyntaxTree(r_)
-    r_tree.showTree()
-
-    afd = directCons(r_tree)
-    afd.drawAutomata('AFD_Directo')
-    return afd
-
-
-def minimizeAFD(afd: AFD, dir: bool) -> AFD:
-    ''' Crea un AFD apor construccion directa '''
-    min_afd = min_AFD(afd)
-    filename = 'AFD_Directo_MIN' if dir else 'AFD_SUB_MIN'
-    min_afd.drawAutomata(filename)
-    return afd
+from .Parser import *
+import sys
 
 
 def ReadYalex(filepath: str) -> None:
@@ -48,27 +13,39 @@ def ReadYalex(filepath: str) -> None:
     regex_ = toPostfix(regex, alphabet=alphabet)
     regex_toTree = processAugmented(regex_, reader.token_names)
 
-    # Impresion de postfix en archivo 'steps.txt'
-    print_regex = transformPostfix(regex_)
-    print_regex = '\n---- Postfix Regex ----\n' + print_regex
-    f = open('./out/steps.txt', 'a')
-    f.write(print_regex)
-    f.close()
-
-    # Creacion e impresion de arbol de expresion
+    # Creacion de arbol de expresion
     r_tree = SyntaxTree(regex_toTree, reader.token_names, alphabet)
-    r_tree.showTree()
 
     # Creacion de AFD
     afd = directCons(r_tree)
     afd.drawAutomata(filename='AFD')
 
-    # Impresion de AFD en archivo 'steps.txt'
-    afd_toString = '\n\n---- AFD ----\n'
-    afd_toString += afd.__repr__() + '\n'
-    f = open('./out/steps.txt', 'a')
-    f.write(afd_toString)
-    f.close()
-
     # Escritura de Scanner
     writeSCanner(afd)
+    print('-> Scanner.py written succesfully')
+
+    return reader.token_names
+
+
+def ReadYapar(filepath: str, token_names: str) -> None:
+    tokens_readed = read_tokens(filepath)
+    tokens_readed = [token for token in tokens_readed if token[0] != '']
+    tokens, items, prods = processLines(tokens_readed)
+
+    intersection = [item for item in tokens if item not in token_names]
+
+    if len(intersection) > 0:
+        sys.tracebacklimit = 0
+        raise Exception('Token in Yalex do not match the tokens in yalp')
+
+    print('-> Tokens in Yalex match the tokens in yalp')
+    lr0: LR0 = make_LR0(items, prods)
+    lr0.drawAutomata()
+
+    test_char = lr0.items_map[0][0].right[1]
+    first = lr0.first(test_char)
+    follow = lr0.follow(test_char)
+
+    print('first', test_char, ':', first)
+    print('follow', test_char, ':', follow)
+    # print(lr0)

@@ -1,7 +1,7 @@
 import inspect as it
-from .Automata import *
+from ..Automata import *
 
-main_lines: str = '''
+def_lines: str = '''
 def ascii_to_char(ascii: int) -> str:
     char = chr(ascii)
 
@@ -11,10 +11,16 @@ def ascii_to_char(ascii: int) -> str:
     elif char == '\\t':
         char = '/t'
 
-    elif char == ' ':
-        char = "' '"
-
     return char
+
+afd = Augmented_AFD(
+    estados={},
+    symbols={},
+    initial={},
+    finals={},
+    transitions={},
+    token_map={}
+)
 
 import sys
 
@@ -24,15 +30,6 @@ if __name__ == '__main__':
 
     filepath = sys.argv[1]
 
-    afd = Augmented_AFD(
-        estados={},
-        symbols={},
-        initial={},
-        finals={},
-        transitions={},
-        token_map={}
-    )
-
     file = open(filepath)
     stream = file.read()
     file.close()
@@ -40,12 +37,17 @@ if __name__ == '__main__':
 
     tokens = afd.simulate_lexer(stream)
 
+    f = open("./out/tokens.txt", "w")
+    ws = '\\n'
     for token in tokens:
-        print(token[0], '->', token[1])
+        f.write(str(token))
+        f.write(ws)
+    f.close()
+    print('-> Tokens founded written in ./out.tokens.txt')
 '''
 
 
-def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
+def writeSCanner(afd: Augmented_AFD, path: str = './out/Scanner.py') -> str:
     source: list = ['from abc import ABC, abstractmethod\n']
     source = source + it.getsourcelines(Automata)[0]
     source = source + it.getsourcelines(AFD)[0]
@@ -60,7 +62,7 @@ def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
 
     source = ''.join(source)
 
-    main_lines_formated = main_lines.format(
+    def_lines_formated = def_lines.format(
         afd.estados,
         afd.symbols,
         afd.initial,
@@ -69,7 +71,7 @@ def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
         afd.token_map
     )
 
-    source += main_lines_formated
+    source += def_lines_formated
 
     out_file = open(path, 'w')
     out_file.write(source)

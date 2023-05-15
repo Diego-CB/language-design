@@ -15,9 +15,17 @@ import graphviz
 import os
 
 
-def ascii_to_char(ascii: int) -> str:
+def ascii_to_char(ascii: int, nonPrint=True) -> str:
     ''' Transforma un ASCII a char '''
+    if (
+        ascii < 32
+        or ascii > 126
+    ):
+        return '~'
+
     char = chr(ascii)
+    if nonPrint:
+        return char
 
     if char == '\n':
         char = '/n'
@@ -63,7 +71,6 @@ class Automata(ABC):
     @abstractmethod
     def drawAutomata(self) -> None: pass
 
-    @abstractmethod
     def simulate(self, c: str) -> bool: pass
 
     def __repr__(self) -> str:
@@ -227,7 +234,7 @@ class AFD(Automata):
         # add edges to the graph
         for k in self.transitions.keys():
             start = f'q{k[0]}'
-            symbol = ascii_to_char(k[1])
+            symbol = ascii_to_char(k[1], False)
             finish = self.transitions[k]
             graph.edge(start, f'q{finish}', label=symbol)
 
@@ -258,36 +265,51 @@ class Augmented_AFD(AFD):
     def simulate_lexer(self, stream: list[int]) -> list[tuple[str]]:
         S: int = self.initial
         tokens: list = []
-        readed_stream = []
+        readed_stream = ''
 
         while len(stream) > 0:
             char = stream.pop(0)
             next_state = self.move(S, char)
-            readed_stream.append(ascii_to_char(char))
+            readed_stream += ascii_to_char(char)
 
             if next_state is None:
 
                 if S in self.finals:
-                    readed_stream = \
-                        ''.join(readed_stream[:-1]) if len(readed_stream) > 1\
+                    readed_stream = readed_stream[:-1]\
+                        if len(readed_stream) > 1\
                         else readed_stream[0]
 
                     token = self.token_map[S]
-                    token_founded = (token, readed_stream)
+                    token_founded = [token, readed_stream]
                     tokens.append(token_founded)
                     stream.insert(0, char)
 
                 else:
-                    readed_stream = readed_stream[0]
-                    tokens.append((
+                    tokens.append([
                         'Lexical ERROR: token not recognized by the languaje',
                         readed_stream
-                    ))
+                    ])
 
-                readed_stream = []
+                readed_stream = ''
                 next_state = self.initial
 
             S = next_state
+
+        if S in self.finals:
+            readed_stream = readed_stream[:-1]\
+                if len(readed_stream) > 1\
+                else readed_stream[0]
+
+            token = self.token_map[S]
+            token_founded = [token, readed_stream]
+            tokens.append(token_founded)
+            stream.insert(0, char)
+
+        else:
+            tokens.append([
+                'Lexical ERROR: token not recognized by the languaje',
+                readed_stream
+            ])
 
         return tokens
 

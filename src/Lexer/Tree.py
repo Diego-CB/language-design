@@ -10,9 +10,9 @@ Autor: Diego Cordova - 20212
 *************************************************
 '''
 
-from ..alfabeto import OPERATORS, ALPHABET
-import graphviz
 import os
+import graphviz
+OPERATORS = ['.', '|', '*', '?', '+']
 
 
 class Node:
@@ -76,7 +76,7 @@ class SyntaxTree:
         self.set_pid(0)
 
     # Constructor
-    def __init__(self, postfix: list, token_names: list, alphabet: list = ALPHABET) -> None:
+    def __init__(self, postfix: list, token_names: list, alphabet: list) -> None:
         '''Crea un arbol de sintaxis a partir de una regex en postfix'''
         self.nodes = None
         self.edges = None
