@@ -74,6 +74,14 @@ def _Goto(I: list[Item], X: str) -> list[Item]:
 
     return target_items
 
+def _I_in_C(I:list[Item], C: list[list[Item]]) -> int | bool:
+    for C_list in C:
+        intersection = [item for item in I if item not in C_list]
+        if len(intersection) == 0:
+            return C.index(C_list)
+
+    return None
+
 
 def make_LR0(items_arg: list[Item]) -> None:
     global items
@@ -95,9 +103,10 @@ def make_LR0(items_arg: list[Item]) -> None:
                 if len(new_i) == 0:
                     continue
 
-                if new_i in C:
+                index_in_C = _I_in_C(new_i, C)
+                if index_in_C is not None:
                     # Add transition from I to new_i with X
-                    transitions[(C.index(I), X)] = C.index(new_i)
+                    transitions[(C.index(I), X)] = index_in_C
                     continue
 
                 # Add new set new_i
@@ -108,15 +117,19 @@ def make_LR0(items_arg: list[Item]) -> None:
                 added_sets += 1
 
     final = None
-    initial = C[0]
+    initial = 0
     estados = list(range(len(C)))
-    for i, l in enumerate(C):
-        if items[-2] in l:
-            final = l
-        print('I', i)
-        for item in l:
-            print(item)
-        print()
 
-    print('Initial: I', C.index(initial))
-    print('Final: I', C.index(final))
+    for I in C:
+        if items[-2] in I:
+            final = C.index(I)
+            break
+
+    return LR0(
+        estados,
+        symbols,
+        initial,
+        final,
+        transitions,
+        C
+    )

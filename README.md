@@ -7,12 +7,12 @@
 
 ## ✅ Rúbrica
 
-- [ ] Correcta interpretación de un archivo de especificación YAPar.
+- [x] Correcta interpretación de un archivo de especificación YAPar.
 - [ ] Validación de tokens provistos en archivo de especificación de YAPar con el
 output generado por YALex.
 - [ ] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
 y CLOSURE.
-- [ ] Generación de elementos de nodos de autómata LR(0) y construcción del
+- [x] Generación de elementos de nodos de autómata LR(0) y construcción del
 autómata LR(0).
 
 ## 🗃️ Estructura de Archivos

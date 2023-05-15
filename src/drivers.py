@@ -27,5 +27,6 @@ def ReadYapar(filepath: str) -> None:
     tokens = read_tokens(filepath)
     tokens = [token for token in tokens if token[0] != '']
     items = processLines(tokens)
-
-    make_LR0(items)
+    lr0: LR0 = make_LR0(items)
+    lr0.drawAutomata()
+    print(lr0)

@@ -71,7 +71,6 @@ class Automata(ABC):
     @abstractmethod
     def drawAutomata(self) -> None: pass
 
-    @abstractmethod
     def simulate(self, c: str) -> bool: pass
 
     def __repr__(self) -> str:

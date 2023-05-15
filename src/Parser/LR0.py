@@ -32,40 +32,35 @@ class LR0(Automata):
         self.transitions: dict = transitions
         self.items_map: list[list[Item]] = items_map
 
-    def simulate(self, c: str) -> bool:
-        S: int = self.initial
-
-        for char in c:
-            next_state = self.move(S, char)
-            if next_state is None:
-                return False
-            S = next_state
-
-        self.actual_state = S
-        return (S in self.finals)
-
-    def drawAutomata(self, filename):
+    def drawAutomata(self, filename='LR0'):
         # create a new graph
         graph = graphviz.Digraph()
 
         # add nodes to the graph
         for node in self.estados:
-            shape, style, fillcolor = 'circle', 'filled', 'white'
+            shape, style, fillcolor = 'box', 'filled', 'white'
 
-            if node in self.finals:
-                shape = 'doublecircle'
-                fillcolor = '#ff9999'
-
+            fillcolor = '#ff9999' if node == self.final else fillcolor
             fillcolor = 'skyblue' if node == self.initial else fillcolor
-            graph.node(f'q{node}', shape=shape,
-                       fillcolor=fillcolor, style=style)
+
+            label = f'I{node}\n'
+            for item in self.items_map[node]:
+                label += '\n' + str(item) + '\n'
+
+            graph.node(
+                f'I{node}',
+                label=label,
+                shape=shape,
+                fillcolor=fillcolor,
+                style=style
+            )
 
         # add edges to the graph
         for k in self.transitions.keys():
-            start = f'q{k[0]}'
-            # symbol = ascii_to_char(k[1], False)
+            start = f'I{k[0]}'
+            symbol = k[1]
             finish = self.transitions[k]
-            # graph.edge(start, f'q{finish}', label=symbol)
+            graph.edge(start, f'I{finish}', label=symbol)
 
         # render the graph
         path = './out/' + filename
@@ -73,6 +68,16 @@ class LR0(Automata):
         os.remove(path)
 
     def __repr__(self) -> str:
-        return super().__repr__() + f'''
-        Finals: {self.finals}
-        '''
+        string = ''
+
+        for index, I in enumerate(self.items_map):
+            string += f'I{index}\n'
+
+            for item in I:
+                string += '  ' + str(item) + '\n'
+
+            string += '\n'
+
+        string += f'Initial: I{self.initial}\n'
+        string += f'Final: I{self.final}\n'
+        return string
