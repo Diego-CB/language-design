@@ -8,7 +8,7 @@
 ## ✅ Rúbrica
 
 - [x] Correcta interpretación de un archivo de especificación YAPar.
-- [ ] Validación de tokens provistos en archivo de especificación de YAPar con el
+- [x] Validación de tokens provistos en archivo de especificación de YAPar con el
 output generado por YALex.
 - [ ] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
 y CLOSURE.
@@ -31,13 +31,18 @@ autómata LR(0).
     - `DirectCons.py`: Implementación de algoritmo de construccion directa de AFD.
     - `Min.py`: Implementación de algoritmo de minimizacion de AFD.
     - `YalexScanner.py`: Lectura de archivos .yal
+    - `WriteScanner.py`: Escritor de Scanner
 
   - ***`Parser`***
     - `YaparProcessor.py`: Procesa los tokens de los archivos yapar
-    - `YaparReader.py`: Lector de archivos *Yapl*
+    - `YaparReader.py`: Lector de archivos *Yalp*
+    - `util.py`: Objetos y funciones utiles
+    - `LR0.py`: Objeto Automata LR0
+    - `LR_Constructor.py`: Construccion de Automata LR0
 
 - ***`out`***: Dentro de esta carpeta se encuentran los archivos resultantes de las ejecuciones.
   - `AFD.png`: Grafo de AFD resultante para el Lexer.
+  - `LR0.png`: Grafo de AFD resultante para el Lexer.
   - `tokens.txt`: Tokens leidos por le scanner
 
 - ***`Examples`***: 

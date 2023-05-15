@@ -49,7 +49,7 @@ def processLines(tokenLines: list[str]) -> None:
     prod_list.append(last_item)
     prod_list.append(start_item)
 
-    return prod_list
+    return tokens, prod_list
 
 
 def _itemsfromProd(prod: dict) -> list[Item]:

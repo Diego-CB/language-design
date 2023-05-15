@@ -165,26 +165,17 @@ afd = Augmented_AFD(
 )
 
 def read_tokens(filepath: str) -> list:
-
     file = open(filepath)
     stream = file.read()
     file.close()
     stream = [ord(char) for char in stream]
-
-    tokens = afd.simulate_lexer(stream)
-
-    f = open("./out/tokens.txt", "w")
-    ws = '\n'
-    for token in tokens:
-        f.write(str(token))
-        f.write(ws)
-    f.close()
-    return tokens
+    return afd.simulate_lexer(stream)
 
 
-import sys
 
 if __name__ == '__main__':
+    import sys
+    
     if len(sys.argv) < 2:
         raise Exception('Input File Missing for Lexical Analysis')
 

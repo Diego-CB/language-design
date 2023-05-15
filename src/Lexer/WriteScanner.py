@@ -22,27 +22,6 @@ afd = Augmented_AFD(
     token_map={}
 )
 
-def read_tokens(filepath: str) -> list:
-
-    file = open(filepath)
-    stream = file.read()
-    file.close()
-    stream = [ord(char) for char in stream]
-
-    tokens = afd.simulate_lexer(stream)
-
-    f = open("./out/tokens.txt", "w")
-    ws = '\\n'
-    for token in tokens:
-        f.write(str(token))
-        f.write(ws)
-    f.close()
-    print('Token founded written in ./out.tokens.txt')
-    return tokens
-
-'''
-
-main_lines: str = '''
 import sys
 
 if __name__ == '__main__':
@@ -64,7 +43,7 @@ if __name__ == '__main__':
         f.write(str(token))
         f.write(ws)
     f.close()
-    print('Token founded written in ./out.tokens.txt')
+    print('-> Tokens founded written in ./out.tokens.txt')
 '''
 
 
@@ -93,7 +72,6 @@ def writeSCanner(afd: Augmented_AFD, path: str = './Scanner.py') -> str:
     )
 
     source += def_lines_formated
-    source += main_lines
 
     out_file = open(path, 'w')
     out_file.write(source)

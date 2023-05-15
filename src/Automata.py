@@ -287,7 +287,7 @@ class Augmented_AFD(AFD):
                 else:
                     tokens.append([
                         'Lexical ERROR: token not recognized by the languaje',
-                        readed_stream + ' ' + str(ord(readed_stream[-1]))
+                        readed_stream
                     ])
 
                 readed_stream = ''
@@ -308,7 +308,7 @@ class Augmented_AFD(AFD):
         else:
             tokens.append([
                 'Lexical ERROR: token not recognized by the languaje',
-                readed_stream + ' ' + str(ord(readed_stream[-1]))
+                readed_stream
             ])
 
         return tokens
