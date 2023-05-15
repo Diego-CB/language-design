@@ -43,7 +43,7 @@ def processLines(tokenLines: list[str]) -> None:
     prod_list: list[Item] = _itemsfromProd(productions)
 
     # Getting augmented grammar
-    starting = prod_list[0].right[1]
+    starting = prod_list[0].left
     start_item = Item('E\'', ['.', starting])
     last_item = Item('E\'', [starting, '.'])
     prod_list.append(last_item)

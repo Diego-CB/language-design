@@ -1,0 +1,1 @@
+py ./main.py ./yalex/slr-3.yal ./yapar/slr-3.yalp ./input/3.txt

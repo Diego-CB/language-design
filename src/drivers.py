@@ -32,11 +32,9 @@ def ReadYapar(filepath: str, token_names: str) -> None:
     tokens_readed = [token for token in tokens_readed if token[0] != '']
     tokens, items = processLines(tokens_readed)
 
-    token_names = [t for t in token_names if t != '']
-    intersection_1 = [item for item in token_names if item not in tokens]
-    intersection_2 = [item for item in tokens if item not in token_names]
+    intersection = [item for item in tokens if item not in token_names]
 
-    if len(intersection_1) > 0 or len(intersection_2) > 0:
+    if len(intersection) > 0:
         sys.tracebacklimit = 0
         raise Exception('Token in Yalex do not match the tokens in yalp')
 

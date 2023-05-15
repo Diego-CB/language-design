@@ -14,8 +14,10 @@ let tokenName = (['A'-'Z'])+
 let token = '%''t''o''k''e''n'ws(tokenNamews)+
 
 let PName = (['a'-'z'])+
-let partProduction = ((tokenName|PName)ws)+
-let orProduction = partProductionws('|'delimpartProduction)*
+let simbol = (tokenName|PName)
+let partProduction = simbol(' 'simbol)*
+let secondP = ('\n'?' '*'|'' 'partProduction'\n')*
+let orProduction = partProduction'\n'secondP
 let production = PName':'wsorProduction';'
 
 rule tokens = 
@@ -23,5 +25,3 @@ rule tokens =
   | comment
   | token { return TOKEN }
   | production { return PRODUCTION }
-
-(* Introducir cualquier trailer aqui *)
