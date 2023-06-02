@@ -1,0 +1,21 @@
+/* Configuración del parser para Gramática No.1 */
+/* Sigue la gramática SLR: */
+/* S -> L = R */
+/* S -> R */
+/* L -> *R */
+/* L -> id */
+/* R -> L */
+
+%token EQUAL ID TIMES
+
+s:
+    l EQUAL r
+  | r
+;
+l:
+    TIMES r
+  | ID
+;
+r:
+    l
+;

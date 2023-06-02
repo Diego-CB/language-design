@@ -1,5 +1,7 @@
 from .util import Item
 from .LR0 import LR0
+from .LR1_table import LR1Table
+from copy import copy as cp
 
 def _getSymbols():
     symbols = []
@@ -133,5 +135,104 @@ def make_LR0(items_arg: list[Item], prods: dict) -> None:
         final,
         transitions,
         C,
-        prods
+        prods,
+        items
     )
+
+def _get_production(item:Item, P:list[Item]) -> int:
+    for p in P:
+        temp_right = cp(item.right)
+        temp_right.remove('.')
+        if p.right == temp_right:
+            return P.index(p)
+        
+def _get_prods(prods: dict) -> list[Item]:
+    new_prods:list[Item] = []
+
+    for symbol in prods.keys():
+        for right in prods[symbol]:
+            new_Item = Item(symbol, right)
+            new_prods.append(new_Item)
+
+    return new_prods
+
+def make_LR1(lr0:LR0) -> LR1Table:
+    Table = LR1Table()
+    symbols = lr0.symbols + ['$']
+    
+    terminals = [s for s in symbols if s.upper() == s]
+    P:list[Item] = _get_prods(lr0.productions)
+    non_terminals = [s for s in symbols if s.upper() != s]
+    
+    follows:dict = {}
+    for s in non_terminals:
+        follows[s] = lr0.follow(s)
+        # print(s, follows[s])
+
+    C:list[list[Item]] = lr0.items_map
+    GOTO:dict = {}
+    ACTIONS:dict = {}
+
+    for i, I in enumerate(C):
+        for item in I:
+            # "." as the last char
+            if item.right.index('.') + 1 == len(item.right):
+                if item.left == 'E\'':
+                    ACTIONS[(i, '$')] = 'acc'
+
+                else:
+                    # REDUCTIONS
+                    target_symbols = follows[item.left]
+                    target_prod = _get_production(item, P)
+                    for symbol in target_symbols:
+                        new_value = ('r',  target_prod)
+                        new_key = (i, symbol)
+
+                        if new_key in list(ACTIONS.keys()) and new_value != ACTIONS[new_key]:
+                            print(f'Error: conflicto en REDUCTION ({i}, {symbol}) ->', ACTIONS[(i, symbol)], ('r',  target_prod))
+                        else:
+                            ACTIONS[(i, symbol)] = ('r',  target_prod)
+
+                continue
+
+            # "." in the item
+            target_symbol = item.right[item.right.index('.') + 1]
+
+            # SHIFTS
+            if target_symbol in terminals:
+                j = _I_in_C(_Goto(I, target_symbol), C)
+  
+                if j is not None:
+                    new_value = ('s', j)
+                    new_key = (i, target_symbol)
+
+                    if new_key in list(ACTIONS.keys()) and new_value != ACTIONS[new_key]:
+                        print(
+                            F'Error: Conflicto en SHIFT ({i}, {target_symbol}) ->',
+                            ACTIONS[(i, target_symbol)],
+                            new_key
+                        )
+
+                    else:
+                        ACTIONS[new_key] = new_value
+            
+            # GOTO's
+            else:
+                j = _I_in_C(_Goto(I, target_symbol), C)
+  
+                if j is not None:
+                    if (
+                        (i, target_symbol) in list(GOTO.keys())
+                        and j != GOTO[(i, target_symbol)]
+                    ):
+                        print(f'Error: Conflicto en GOTO ({i}, {target_symbol}) ->', GOTO[(i, target_symbol)], j)
+                    else:
+                        GOTO[(i, target_symbol)] = (j)
+
+    Table.ACTIONS = ACTIONS
+    Table.GOTO = GOTO
+    Table.states = lr0.estados
+    Table.symbols = symbols
+    Table.prods = P
+
+    return Table

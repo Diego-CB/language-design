@@ -24,7 +24,8 @@ class LR0(Automata):
         final: int,
         transitions: dict,
         items_map: list[list[Item]],
-        produtions: dict
+        produtions: dict,
+        items: list[list[Item]]
     ) -> None:
         super().__init__()
         self.final: int = final
@@ -34,7 +35,8 @@ class LR0(Automata):
         self.transitions: dict = transitions
         self.items_map: list[list[Item]] = items_map
         self.productions: list[list[Item]] = produtions
-        self.startSymbol = 'E\''
+        self.items = items
+        self.startSymbol = list(produtions.keys())[0]
 
     def drawAutomata(self, filename='LR0'):
         # create a new graph
@@ -82,7 +84,7 @@ class LR0(Automata):
 
         return first
 
-    def follow(self, X: str) -> list[str]:
+    def follow(self, X: str, visited=[]) -> list[str]:
         folow = ['$'] if X == self.startSymbol else []
 
         for k in self.productions.keys():
@@ -93,9 +95,12 @@ class LR0(Automata):
                 item_index = item.index(X)
 
                 if item_index == len(item) - 1:
-                    continue
-
-                folow = folow + self.first(item[item_index + 1])
+                    if k != X:
+                        if k not in visited:
+                            visited = visited + [k]
+                            folow = folow + self.follow(k, visited)
+                else:
+                    folow = folow + self.first(item[item_index + 1])
 
         return folow
 

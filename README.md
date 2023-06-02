@@ -1,4 +1,4 @@
-# Lab E: YAPar
+# Lab F
 
 ## 📡 Tecnologias Utilizadas
 
@@ -7,13 +7,10 @@
 
 ## ✅ Rúbrica
 
-- [x] Correcta interpretación de un archivo de especificación YAPar.
-- [x] Validación de tokens provistos en archivo de especificación de YAPar con el
-output generado por YALex.
-- [x] Cálculo de funciones asociadas sobre la gramática provista: FIRST, FOLLOW
-y CLOSURE.
-- [x] Generación de elementos de nodos de autómata LR(0) y construcción del
-autómata LR(0).
+- [x] Construcción de tabla de parseo SLR(1).
+- [x] Implementación de algoritmo de parsing SLR(1).
+- [x] Indicación de errores sintácticos.
+- [x] Implementación para la Indicación de errores gramaticales al evaluar las entradas en la tabla de parseo SLR(1), identificando conflictos en la tabla para gramáticas que no son SLR.
 
 ## 🗃️ Estructura de Archivos
 
@@ -52,7 +49,6 @@ autómata LR(0).
 - ***`input`***: Ejemplos de archivos de entrada para el Scanner.
 - ***`yalex`***: Ejemplos de archivos yalex para lectura.
 - ***`yapar`***: Ejemplos de archivos yapar para lectura.
-- ***`Evidencia`***: Evidencia de la ejecucion del Lab E para los 4 archivos
 
 - `main.py`: Programa principal (Driver Program).
 
@@ -60,21 +56,21 @@ autómata LR(0).
 
 1. Instale las **dependencias** del projecto ejecutando `pip install -r requirements.txt`
 2. Ejecute el archivo `main.py` escribiendo como argumentos:
-   1. El arhivo *YALex* con la definicíon del analizador lexico.
-   2. El arhivo *YAPar* con la definicíon del analizador sintactico.
-   3. Un archivo de entrada para ambos generadores.
-    > Ejemplo: py main.py *Archivo.yal* *Archivo.yalp* *Archivo.txt*
+    1. El arhivo *YALex* con la definicíon del analizador lexico.
+    2. El arhivo *YAPar* con la definicíon del analizador sintactico.
+    3. Un archivo de entrada para ambos generadores.
+      > Ejemplo: py main.py *Archivo.yal* *Archivo.yalp* *Archivo.txt*
 
 3. O ejecute alguno de los ejemplos predefinidos en la carpeta ***`Examples`***
    > Ejemplo: *./Examples/1*
 
 4. Se crearan varias carpetas `__pycache__` con compilados del codigo.
 5. Se crearan los siguientes archivos con el autput de la lectura del archivo YALex:
-     - `./out/AFD.png`: Con el AFD generado por el Yalex
-     - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
-     - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
-     - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
-     - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
+   - `./out/AFD.png`: Con el AFD generado por el Yalex
+   - `./out/LR0.png`: Con el Automata LR0 generado a partir del YAPar
+   - `./out/Scanner.txt`: Con el Analizador lexico generado en base al yalex de entrada
+   - `./out/tokens.txt`: Con los tokens leidos por el Scanner generado
+   - `./out/yapar_tokens.txt`: Con los tokens leidos por el scanner de YAPar
 
 6. En consola se imprimera una prueba del funcionamiento de las funciones ***FOLLOW*** y ***FIRST***
 

@@ -6,7 +6,7 @@ class Item:
     def __repr__(self) -> str:
         string = self.left + ' →'
         for char in self.right:
-            actual = '*' if char == '.' else char
+            actual = '·' if char == '.' else char
             string += ' ' + actual
 
         return string
