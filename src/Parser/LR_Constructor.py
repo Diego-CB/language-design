@@ -167,6 +167,7 @@ def make_LR1(lr0:LR0) -> LR1Table:
     follows:dict = {}
     for s in non_terminals:
         follows[s] = lr0.follow(s)
+        print(f'{s}: {follows[s]}')
 
     C:list[list[Item]] = lr0.items_map
     GOTO:dict = {}
@@ -176,7 +177,7 @@ def make_LR1(lr0:LR0) -> LR1Table:
         for item in I:
             # "." as the last char
             if item.right.index('.') + 1 == len(item.right):
-                if item.left == lr0.startSymbol:
+                if item.left == 'E\'':
                     ACTIONS[(i, '$')] = 'acc'
 
                 else:

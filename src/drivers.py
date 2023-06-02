@@ -40,6 +40,7 @@ def ReadYapar(filepath: str, token_names: str) -> None:
 
     print('-> Tokens in Yalex match the tokens in yalp')
     lr0: LR0 = make_LR0(items, prods)
+    print(lr0.startSymbol)
     lr0.drawAutomata()
 
     LR1Table = make_LR1(lr0)
