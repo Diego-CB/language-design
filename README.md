@@ -7,10 +7,10 @@
 
 ## ✅ Rúbrica
 
-- [ ] Construcción de tabla de parseo SLR(1).
-- [ ] Implementación de algoritmo de parsing SLR(1).
-- [ ] Indicación de errores sintácticos.
-- [ ] Implementación para la Indicación de errores gramaticales al evaluar las entradas en la tabla de parseo SLR(1), identificando conflictos en la tabla para gramáticas que no son SLR.
+- [x] Construcción de tabla de parseo SLR(1).
+- [x] Implementación de algoritmo de parsing SLR(1).
+- [x] Indicación de errores sintácticos.
+- [x] Implementación para la Indicación de errores gramaticales al evaluar las entradas en la tabla de parseo SLR(1), identificando conflictos en la tabla para gramáticas que no son SLR.
 
 ## 🗃️ Estructura de Archivos
 
