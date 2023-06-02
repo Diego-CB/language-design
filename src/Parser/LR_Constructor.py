@@ -1,5 +1,6 @@
 from .util import Item
 from .LR0 import LR0
+from .LR1_table import LR1Table
 
 def _getSymbols():
     symbols = []
@@ -133,5 +134,81 @@ def make_LR0(items_arg: list[Item], prods: dict) -> None:
         final,
         transitions,
         C,
-        prods
+        prods,
+        items
     )
+
+def make_LR1(lr0:LR0) -> LR1Table:
+    C:list[list[Item]] = lr0.items_map
+    Table = LR1Table()
+    ACTIONS:dict = {}
+    GOTO:dict = {}
+    symbols = lr0.symbols + ['$']
+
+    for I in C:
+        for a in symbols:
+            case_bc = False
+            for i in I:
+                if i.right.index('.') + 1 == len(i.right):
+                    case_bc = True
+
+            if case_bc:
+                for i in I:
+                    # CASO C    
+                    if i.left == 'E\'':
+                        ACTIONS[(I.index(i), '$')] = 'accept'
+                        continue
+
+                    # CASO B:
+                    # Simbolo antes del “.”
+                    follow_simbols = lr0.follow(i.left)
+                    alpha = i.right[0:-1]
+                    new_item = Item(i.left, alpha)
+
+                    for new_a in follow_simbols:
+                        key = (I.index(i), new_a)
+                        if key in list(ACTIONS.keys()):
+                            print('Error de Gramatical')
+                            print(i)
+                            continue
+                        ACTIONS[key] = ('r', new_item)
+
+            # CASO A:
+            if a.upper() == a:
+                for i in I:
+                    # Simbolo despues del “.”
+                    if i.right.index('.') + 1 == len(i.right):
+                        continue
+                    target_symbol = i.right[i.right.index('.') + 1]
+                    j = _I_in_C(_Goto(I, a), lr0.items_map)
+
+                    if j is None:
+                        continue
+
+                    if target_symbol == a:
+                        key = (I.index(i), a)
+                        if key in list(ACTIONS.keys()):
+                            print('Error de Gramatical')
+                            print(i)
+                            continue
+                        ACTIONS[key] = ('s', j)
+                continue
+
+            # No terminales
+            for i in I:
+                j = _I_in_C(_Goto(I, i.left), lr0.items_map)
+
+                if j is None:
+                    continue
+
+                key = (I.index(i), i.left)
+                if key in list(GOTO.keys()):
+                    print('Error de Gramatical')
+                    print(i)
+                    continue
+                GOTO[key] = j
+
+    Table.actions = ACTIONS
+    Table.goto = GOTO
+    Table.states = lr0.estados
+    return Table

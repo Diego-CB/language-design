@@ -42,10 +42,6 @@ def ReadYapar(filepath: str, token_names: str) -> None:
     lr0: LR0 = make_LR0(items, prods)
     lr0.drawAutomata()
 
-    test_char = lr0.items_map[0][0].right[1]
-    first = lr0.first(test_char)
-    follow = lr0.follow(test_char)
-
-    print('first', test_char, ':', first)
-    print('follow', test_char, ':', follow)
+    LR1Table = make_LR1(lr0)
+    LR1Table.draw_table()
     # print(lr0)

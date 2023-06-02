@@ -24,7 +24,8 @@ class LR0(Automata):
         final: int,
         transitions: dict,
         items_map: list[list[Item]],
-        produtions: dict
+        produtions: dict,
+        items: list[list[Item]]
     ) -> None:
         super().__init__()
         self.final: int = final
@@ -35,6 +36,7 @@ class LR0(Automata):
         self.items_map: list[list[Item]] = items_map
         self.productions: list[list[Item]] = produtions
         self.startSymbol = 'E\''
+        self.items = items
 
     def drawAutomata(self, filename='LR0'):
         # create a new graph
