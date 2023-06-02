@@ -167,7 +167,7 @@ def make_LR1(lr0:LR0) -> LR1Table:
     follows:dict = {}
     for s in non_terminals:
         follows[s] = lr0.follow(s)
-        print(f'{s}: {follows[s]}')
+        # print(s, follows[s])
 
     C:list[list[Item]] = lr0.items_map
     GOTO:dict = {}
@@ -214,7 +214,7 @@ def make_LR1(lr0:LR0) -> LR1Table:
                         )
 
                     else:
-                        ACTIONS[(i, target_symbol)] = ('s', j)
+                        ACTIONS[new_key] = new_value
             
             # GOTO's
             else:

@@ -12,6 +12,7 @@ let comment = '/''*'any'*''/'
 
 let tokenName = (['A'-'Z'])+
 let token = '%''t''o''k''e''n'ws(tokenNamews)+
+let ignoreTOken = '%''I''G''N''O''R''E'' 'tokenName
 
 let PName = (['a'-'z'])+
 let simbol = (tokenName|PName)
@@ -22,6 +23,7 @@ let production = PName':'wsorProduction';'
 
 rule tokens = 
     ws
+  | ignoreTOken
   | comment
   | token { return TOKEN }
   | production { return PRODUCTION }

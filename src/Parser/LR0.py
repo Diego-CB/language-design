@@ -84,7 +84,7 @@ class LR0(Automata):
 
         return first
 
-    def follow(self, X: str) -> list[str]:
+    def follow(self, X: str, visited=[]) -> list[str]:
         folow = ['$'] if X == self.startSymbol else []
 
         for k in self.productions.keys():
@@ -96,7 +96,9 @@ class LR0(Automata):
 
                 if item_index == len(item) - 1:
                     if k != X:
-                        folow = folow = self.follow(k)
+                        if k not in visited:
+                            visited = visited + [k]
+                            folow = folow + self.follow(k, visited)
                 else:
                     folow = folow + self.first(item[item_index + 1])
 
