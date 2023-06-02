@@ -27,7 +27,7 @@ def ReadYalex(filepath: str) -> None:
     return reader.token_names
 
 
-def ReadYapar(filepath: str, token_names: str) -> None:
+def ReadYapar(filepath: str, token_names: str) -> LR1Table:
     tokens_readed = read_tokens(filepath)
     tokens_readed = [token for token in tokens_readed if token[0] != '']
     tokens, items, prods = processLines(tokens_readed)
@@ -45,4 +45,4 @@ def ReadYapar(filepath: str, token_names: str) -> None:
 
     LR1Table = make_LR1(lr0)
     LR1Table.draw_table()
-    # print(lr0)
+    return LR1Table, tokens

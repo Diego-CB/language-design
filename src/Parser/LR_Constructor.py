@@ -229,8 +229,10 @@ def make_LR1(lr0:LR0) -> LR1Table:
                     else:
                         GOTO[(i, target_symbol)] = (j)
 
-    Table.actions = ACTIONS
-    Table.goto = GOTO
+    Table.ACTIONS = ACTIONS
+    Table.GOTO = GOTO
     Table.states = lr0.estados
     Table.symbols = symbols
+    Table.prods = P
+
     return Table
